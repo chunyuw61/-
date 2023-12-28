@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.orderforgoods.mapper.FruittypesMapper">
+    
+    <resultMap type="Fruittypes" id="FruittypesResult">
+        <result property="fruittypesId"    column="fruitTypes_id"    />
+        <result property="name"    column="name"    />
+        <result property="code"    column="code"    />
+        <result property="createdBy"    column="CREATED_BY"    />
+        <result property="createdTime"    column="CREATED_TIME"    />
+        <result property="updatedBy"    column="UPDATED_BY"    />
+        <result property="updatedTime"    column="UPDATED_TIME"    />
+        <result property="REVISION"    column="REVISION"    />
+        <result property="isStatus"    column="is_status"    />
+    </resultMap>
+
+    <sql id="selectFruittypesVo">
+        select fruitTypes_id, name, code, CREATED_BY, CREATED_TIME, UPDATED_BY, UPDATED_TIME, REVISION, is_status from fruittypes
+    </sql>
+
+    <select id="selectAllFruittypes" resultMap="FruittypesResult">
+        <include refid="selectFruittypesVo"/>
+    </select>
+
+    <select id="selectFruittypesList" parameterType="Fruittypes" resultMap="FruittypesResult">
+        <include refid="selectFruittypesVo"/>
+        <where>  
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="code != null "> and code = #{code}</if>
+            <if test="createdBy != null  and createdBy != ''"> and CREATED_BY = #{createdBy}</if>
+            <if test="createdTime != null "> and CREATED_TIME = #{createdTime}</if>
+            <if test="updatedBy != null  and updatedBy != ''"> and UPDATED_BY = #{updatedBy}</if>
+            <if test="updatedTime != null "> and UPDATED_TIME = #{updatedTime}</if>
+            <if test="REVISION != null "> and REVISION = #{REVISION}</if>
+            <if test="isStatus != null "> and is_status = #{isStatus}</if>
+        </where>
+    </select>
+    
+    <select id="selectFruittypesByFruittypesId" parameterType="Long" resultMap="FruittypesResult">
+        <include refid="selectFruittypesVo"/>
+        where fruitTypes_id = #{fruittypesId}
+    </select>
+        
+    <insert id="insertFruittypes" parameterType="Fruittypes" useGeneratedKeys="true" keyProperty="fruittypesId">
+        insert into fruittypes
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="name != null">name,</if>
+            <if test="code != null">code,</if>
+            <if test="createdBy != null">CREATED_BY,</if>
+            <if test="createdTime != null">CREATED_TIME,</if>
+            <if test="updatedBy != null">UPDATED_BY,</if>
+            <if test="updatedTime != null">UPDATED_TIME,</if>
+            <if test="REVISION != null">REVISION,</if>
+            <if test="isStatus != null">is_status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="name != null">#{name},</if>
+            <if test="code != null">#{code},</if>
+            <if test="createdBy != null">#{createdBy},</if>
+            <if test="createdTime != null">#{createdTime},</if>
+            <if test="updatedBy != null">#{updatedBy},</if>
+            <if test="updatedTime != null">#{updatedTime},</if>
+            <if test="REVISION != null">#{REVISION},</if>
+            <if test="isStatus != null">#{isStatus},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFruittypes" parameterType="Fruittypes">
+        update fruittypes
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="name != null">name = #{name},</if>
+            <if test="code != null">code = #{code},</if>
+            <if test="createdBy != null">CREATED_BY = #{createdBy},</if>
+            <if test="createdTime != null">CREATED_TIME = #{createdTime},</if>
+            <if test="updatedBy != null">UPDATED_BY = #{updatedBy},</if>
+            <if test="updatedTime != null">UPDATED_TIME = #{updatedTime},</if>
+            <if test="REVISION != null">REVISION = #{REVISION},</if>
+            <if test="isStatus != null">is_status = #{isStatus},</if>
+        </trim>
+        where fruitTypes_id = #{fruittypesId}
+    </update>
+
+    <delete id="deleteFruittypesByFruittypesId" parameterType="Long">
+        delete from fruittypes where fruitTypes_id = #{fruittypesId}
+    </delete>
+
+    <delete id="deleteFruittypesByFruittypesIds" parameterType="String">
+        delete from fruittypes where fruitTypes_id in 
+        <foreach item="fruittypesId" collection="array" open="(" separator="," close=")">
+            #{fruittypesId}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.orderforgoods.mapper.FruitPriceMapper">
+    
+    <resultMap type="FruitPrice" id="FruitPriceResult">
+        <result property="pId"    column="p_id"    />
+        <result property="fruitId"    column="fruit_id"    />
+        <result property="code"    column="code"    />
+        <result property="name"    column="name"    />
+        <result property="maxprice"    column="maxprice"    />
+        <result property="price"    column="price"    />
+        <result property="zhekou"    column="zhekou"    />
+        <result property="REVISION"    column="REVISION"    />
+        <result property="createdBy"    column="CREATED_BY"    />
+        <result property="createdTime"    column="CREATED_TIME"    />
+        <result property="updatedBy"    column="UPDATED_BY"    />
+        <result property="updatedTime"    column="UPDATED_TIME"    />
+    </resultMap>
+
+    <sql id="selectFruitPriceVo">
+        select p_id, fruit_id, code, name, maxprice, price, zhekou, REVISION, CREATED_BY, CREATED_TIME, UPDATED_BY, UPDATED_TIME from fruit_price
+    </sql>
+
+    <select id="selectFruitPriceList" parameterType="FruitPrice" resultMap="FruitPriceResult">
+        <include refid="selectFruitPriceVo"/>
+        <where>  
+            <if test="code != null  and code != ''"> and code = #{code}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="maxprice != null "> and maxprice = #{maxprice}</if>
+            <if test="price != null "> and price = #{price}</if>
+            <if test="zhekou != null "> and zhekou = #{zhekou}</if>
+        </where>
+    </select>
+    
+    <select id="selectFruitPriceByPId" parameterType="Long" resultMap="FruitPriceResult">
+        <include refid="selectFruitPriceVo"/>
+        where p_id = #{pId}
+    </select>
+
+    <!--查询单价-->
+    <select id="selectPriceByCode" parameterType="String" resultType="Double">
+        select price from fruit_price where code = #{code}
+    </select>
+
+    <insert id="insertFruitPrice" parameterType="FruitPrice">
+        insert into fruit_price
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="pId != null">p_id,</if>
+            <if test="fruitId != null">fruit_id,</if>
+            <if test="code != null">code,</if>
+            <if test="name != null">name,</if>
+            <if test="maxprice != null">maxprice,</if>
+            <if test="price != null">price,</if>
+            <if test="zhekou != null">zhekou,</if>
+            <if test="REVISION != null">REVISION,</if>
+            <if test="createdBy != null">CREATED_BY,</if>
+            <if test="createdTime != null">CREATED_TIME,</if>
+            <if test="updatedBy != null">UPDATED_BY,</if>
+            <if test="updatedTime != null">UPDATED_TIME,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="pId != null">#{pId},</if>
+            <if test="fruitId != null">#{fruitId},</if>
+            <if test="code != null">#{code},</if>
+            <if test="name != null">#{name},</if>
+            <if test="maxprice != null">#{maxprice},</if>
+            <if test="price != null">#{price},</if>
+            <if test="zhekou != null">#{zhekou},</if>
+            <if test="REVISION != null">#{REVISION},</if>
+            <if test="createdBy != null">#{createdBy},</if>
+            <if test="createdTime != null">#{createdTime},</if>
+            <if test="updatedBy != null">#{updatedBy},</if>
+            <if test="updatedTime != null">#{updatedTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateFruitPrice" parameterType="FruitPrice">
+        update fruit_price
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="fruitId != null">fruit_id = #{fruitId},</if>
+            <if test="code != null">code = #{code},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="maxprice != null">maxprice = #{maxprice},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="zhekou != null">zhekou = #{zhekou},</if>
+            <if test="REVISION != null">REVISION = #{REVISION},</if>
+            <if test="createdBy != null">CREATED_BY = #{createdBy},</if>
+            <if test="createdTime != null">CREATED_TIME = #{createdTime},</if>
+            <if test="updatedBy != null">UPDATED_BY = #{updatedBy},</if>
+            <if test="updatedTime != null">UPDATED_TIME = #{updatedTime},</if>
+        </trim>
+        where p_id = #{pId}
+    </update>
+
+    <delete id="deleteFruitPriceByPId" parameterType="Long">
+        delete from fruit_price where p_id = #{pId}
+    </delete>
+
+    <delete id="deleteFruitPriceByPIds" parameterType="String">
+        delete from fruit_price where p_id in 
+        <foreach item="pId" collection="array" open="(" separator="," close=")">
+            #{pId}
+        </foreach>
+    </delete>
+
+</mapper>

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+
+<head>
+    <th:block th:include="include :: header('退货单明细列表')"/>
+</head>
+<body class="gray-bg">
+<div class="container-div">
+    <div class="row">
+        <div class="col-sm-12 search-collapse">
+            <form id="formId">
+                <div class="select-list">
+                    <ul>
+                        <li>
+                            <label>门店编号:</label>
+                            <input type="text" name="sId"/>
+                        </li>
+                        <li>
+                            <label>退货单编号:</label>
+                            <input type="text" name="rdNumber"/>
+                        </li>
+                        <li>
+                            <label>审批:</label>
+                            <input type="text" name="examine"/>
+                        </li>
+                        <li>
+                            <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i
+                                    class="fa fa-search"></i>&nbsp;搜索</a>
+                            <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i
+                                    class="fa fa-refresh"></i>&nbsp;重置</a>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+        </div>
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+            <a class="btn btn-warning" onclick="$.table.exportExcel()"
+               shiro:hasPermission="orderforgoods:returnorderdetails:export">
+                <i class="fa fa-download"></i> 导出
+            </a>
+        </div>
+        <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+        </div>
+    </div>
+</div>
+<th:block th:include="include :: footer"/>
+<script th:inline="javascript">
+    var editFlag = [[${@permission.hasPermi('orderforgoods:returnorderdetails:edit')}]];
+    var removeFlag = [[${@permission.hasPermi('orderforgoods:returnorderdetails:remove')}]];
+    var examineDatas = [[${@dict.getType('examine_and_approve')}]];
+    var prefix = ctx + "orderforgoods/returnorderdetails";
+
+    $(function () {
+        var options = {
+            url: prefix + "/list",
+            createUrl: prefix + "/add",
+            updateUrl: prefix + "/edit/{id}",
+            removeUrl: prefix + "/remove",
+            exportUrl: prefix + "/export",
+            modalName: "退货单明细",
+            columns: [{
+                checkbox: true
+            },
+                {
+                    field: 'rdNumber',
+                    title: '退货编号'
+                },
+                {
+                    field: 'fruittypesId',
+                    title: '水果类型'
+                },
+                {
+                    field: 'fruitId',
+                    title: '水果编号'
+                },
+                {
+                    field: 'rdCount',
+                    title: '数量'
+                },
+                {
+                    field: 'sId',
+                    title: '门店id'
+                },
+                {
+                    field: 'examine',
+                    title: '审批',
+                    formatter: function (value, row, index) {
+                        return $.table.selectDictLabel(examineDatas, value);
+                    }
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function (value, row, index) {
+                        var actions = [];
+                        if (row.examine == 0){
+                            actions.push('<a class="btn btn-success btn-xs" href="javascript:void(0)" onclick="approve(\'' + row.rdId + '\')"><i class="fa fa-check"></i>通过审批</a> ');
+                            actions.push('<a class="btn btn-danger btn-xs" href="javascript:void(0)" onclick="reject(\'' + row.rdId + '\')"><i class="fa fa-times"></i>不通过审批</a>');
+                        }else {
+                            actions.push('已操作')
+                        }
+                        return actions.join('');
+                    }
+                }]
+        };
+        $.table.init(options);
+    });
+
+</script>
+
+<script>
+    function approve(rdId) {
+        $.ajax({
+            url: "http://localhost:80/examine/pass", // 修改这里
+            type: "POST",
+            contentType: "application/json", // 添加这一行
+            data: JSON.stringify({
+                "rdId": rdId
+            }),
+            success: function (data) {
+                console.log(data)
+                location.reload();
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                // 处理错误的情况
+            }
+        });
+    }
+
+    function reject(rdId) {
+        $.ajax({
+            url:"http://localhost:80/examine/nopass",
+            type: "POST",
+            contentType: "application/json", // 添加这一行
+            data: JSON.stringify({
+                "rdId": rdId
+            }),
+            success: function (data) {
+                location.reload();
+                console.log(data)
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                // 处理错误的情况
+            }
+        });
+
+    }
+
+</script>
+</body>
+</html>
