@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('门店库存列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>门店编号：</label>
+                                <input type="text" name="shopId"/>
+                            </li>
+                            <li>
+                                <label>水果种类编号：</label>
+                                <input type="text" name="fruittypesId"/>
+                            </li>
+                            <li>
+                                <label>水果编号：</label>
+                                <input type="text" name="fruitId"/>
+                            </li>
+                            <li>
+                                <label>状态：</label>
+                                <select name="isStatus" th:with="type=${@dict.getType('fruits')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="inventory:storeinventory:add">
+                    <i class="fa fa-plus"></i> 添加门店库存
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="inventory:storeinventory:remove">
+                    <i class="fa fa-remove"></i> 批量清零
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('inventory:storeinventory:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('inventory:storeinventory:remove')}]];
+        var isStatusDatas = [[${@dict.getType('fruits')}]];
+        var prefix = ctx + "inventory/storeinventory";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "门店库存",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'inentorydetailsId',
+                    title: '序号',
+                    formatter: function (value, row, index) {
+                        return index + 1
+                    }
+                },
+                {
+                    field: 'shopId',
+                    title: '门店编号',
+                    visible: false
+                },
+                {
+                    title: '门店名称',
+                    formatter: function(value, row, index) {
+                        (function () {
+                            selectShopNameByShopId(row.shopId, index)
+                        })();
+                        return ('<span id=' + "shopNameSpan" + index + '></span>')
+                    }
+                },
+                {
+                    field: 'fruittypesId',
+                    title: '水果种类编号',
+                    visible: false
+                },
+                {
+                    title: '水果种类名称',
+                    formatter: function(value, row, index) {
+                        (function () {
+                            selectFruitTypeNameByFruitTypeId(row.fruittypesId, index)
+                        })();
+                        return ('<span id=' + "fruitTypeNameSpan" + index + '></span>')
+                    }
+                },
+                {
+                    field: 'fruitId',
+                    title: '水果编号',
+                    visible: false
+                },
+                {
+                    title: '水果名称',
+                    formatter: function(value, row, index) {
+                        (function () {
+                            selectFruitNameByFruitId(row.fruitId, index)
+                        })();
+                        return ('<span id=' + "fruitNameSpan" + index + '></span>')
+                    }
+                },
+                {
+                    field: 'number',
+                    title: '库存(kg)'
+                },
+                {
+                    field: 'createdBy',
+                    title: '创建人'
+                },
+                {
+                    field: 'createdTime',
+                    title: '创建时间'
+                },
+                {
+                    field: 'updatedBy',
+                    title: '更新人'
+                },
+                {
+                    field: 'updatedTime',
+                    title: '更新时间'
+                },
+                {
+                    field: 'isStatus',
+                    title: '状态',
+                    formatter: function(value, row, index) {
+                        if (value === 1) {
+                            return ('<i class="fa fa-toggle-on text-info fa-2x" onclick="storeinventoryBan(' + row.inentorydetailsId + ',' + 0 + ')"></i>')
+                        } else {
+                            return ('<i class="fa fa-toggle-off text-info fa-2x" onclick="storeinventoryBan(' + row.inentorydetailsId + ',' + 1 + ')"></i>')
+                        }
+                    }
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.inentorydetailsId + '\')"><i class="fa fa-edit"></i>修改库存</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.inentorydetailsId + '\')"><i class="fa fa-remove"></i>清零</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+    </script>
+
+<!--  向表格中插入门店名称和水果种类名称  -->
+    <script>
+        // 根据门店编号查询门店名称
+        function selectShopNameByShopId(shopId, index) {
+            $.ajax({
+                url: "/inventory/storeinventory/selectShopName",
+                dataType: "json",
+                data: {
+                    "sNumber": shopId
+                },
+                type: "post",
+                success: function (resp) {
+                    $("#shopNameSpan" + index).html(resp.shopName)
+                },
+                error:function(xhr,type,errorThrown){
+                    console.log('XMLHttpRequest 对象:',xhr);
+                    console.log('错误类型:', type);
+                    console.log('错误描述:', errorThrown);
+                    $.modal.alertError("请求失败");
+                }
+            })
+        }
+
+        // 根据水果种类编号查询水果种类名称
+        function selectFruitTypeNameByFruitTypeId(fruittypesId, index) {
+            $.ajax({
+                url: "/inventory/storeinventory/selectFruitTypeName",
+                dataType: "json",
+                data: {
+                    "code": fruittypesId
+                },
+                type: "post",
+                success: function (resp) {
+                    $("#fruitTypeNameSpan" + index).html(resp.fruitTypeName)
+                },
+                error:function(xhr,type,errorThrown){
+                    console.log('XMLHttpRequest 对象:',xhr);
+                    console.log('错误类型:', type);
+                    console.log('错误描述:', errorThrown);
+                    $.modal.alertError("请求失败");
+                }
+            })
+        }
+
+        // 根据水果编号查询水果名称
+        function selectFruitNameByFruitId(fruitId, index) {
+            $.ajax({
+                url: "/inventory/storeinventory/selectFruitNameByFruitId",
+                dataType: "json",
+                data: {
+                    "code": fruitId
+                },
+                type: "post",
+                success: function (resp) {
+                    $("#fruitNameSpan" + index).html(resp.fruitName)
+                },
+                error:function(xhr,type,errorThrown){
+                    console.log('XMLHttpRequest 对象:',xhr);
+                    console.log('错误类型:', type);
+                    console.log('错误描述:', errorThrown);
+                    $.modal.alertError("请求失败");
+                }
+            })
+        }
+    </script>
+
+<!--  下架水果  -->
+    <script>
+        // 下架水果
+        function storeinventoryBan(inentorydetailsId, isStatus) {
+            let msgConfirm;
+            if (isStatus === 0) {
+                msgConfirm = "确定要下架该门店的该种水果吗?";
+            } else {
+                msgConfirm = "确定要上架该门店的该种水果吗?"
+            }
+            $.modal.confirm(msgConfirm, function() {
+                $.modal.loading("正在处理中，请稍后...");
+                setTimeout(function() {
+                    storeinventoryBans(inentorydetailsId, isStatus);
+                }, 1000); // 3000毫秒等于3秒
+            });
+        }
+        function storeinventoryBans(inentorydetailsId, isStatus) {
+            $.ajax({
+                url: "/inventory/storeinventory/edit",
+                data: {
+                    "inentorydetailsId": inentorydetailsId,
+                    "isStatus": isStatus
+                },
+                dataType: "json",
+                type: "post",
+                success: function (resp) {
+                    $.modal.closeLoading(); // 关闭遮罩层
+                    $.modal.msgSuccess(resp.msg);
+                    location.reload();
+                },
+                error:function(xhr,type,errorThrown){
+                    console.log('XMLHttpRequest 对象:',xhr);
+                    console.log('错误类型:', type);
+                    console.log('错误描述:', errorThrown);
+                    $.modal.alertError("请求失败");
+                }
+            })
+        }
+    </script>
+</body>
+</html>

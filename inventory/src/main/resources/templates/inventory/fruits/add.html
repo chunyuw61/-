@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <script src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.3.1/jquery.min.js"></script>
+    <th:block th:include="include :: header('新增水果')" />
+    <script src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-fruits-add">
+            <!-- 水果种类编号 -->
+            <input id="fruittypesId" name="fruittypesId" class="form-control" type="hidden" required readonly>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">水果种类名称：</label>
+                <div class="col-sm-4">
+                    <select id="fruittypesName" name="fruittypesName" class="form-control" required></select>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">水果编号：</label>
+                <div class="col-sm-4">
+                    <input id="code" name="code" class="form-control" type="text" placeholder="请输入水果编号" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">水果名称：</label>
+                <div class="col-sm-4">
+                    <input id="name" name="name" class="form-control" type="text" placeholder="请输入水果名称" required>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label is-required">水果图片：</label>
+                <div class="col-sm-4">
+                    <input id="file" name="file" class="form-control" type="file" placeholder="请插入水果图片" required>
+                </div>
+<!--                <div class="col-sm-2">-->
+<!--                    <input type="button" id="upload" class="btn btn-primary" value="上传">-->
+<!--                </div>-->
+            </div>
+            <!-- 从OSS获得的图片地址 -->
+            <input type="hidden" id="img" name="img" class="form-control">
+            <div class="form-group">
+                <div class="col-sm-offset-4 col-sm-6" style="margin-left: 435px; width: 300px; height: 300px; border: 1px solid #e5e6e7">
+                    <img id="previewImage" class="img-thumbnail" src="#" alt="预览图" style="max-width: 300px; max-height: 300px;">
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-2">
+                    <button type="button" class="btn btn-primary" id="addFruit">添加</button>
+                    <button class="btn btn-default" onclick="$.modal.closeTab()">关闭</button>
+                </div>
+            </div>
+        </form>
+    </div>
+<!--  手动提交表单  -->
+    <script>
+        function submitAddFruitForm() {
+            let img = $("#img").val();
+            $.ajax({
+                url: "/inventory/fruits/add",
+                data: {
+                    "fruittypesId": $("#fruittypesId").val(),
+                    "code": $("#code").val(),
+                    "name": $("#name").val(),
+                    "img": img
+                },
+                dataType: "json",
+                type: "post",
+                success: function (resp) {
+                    $.modal.loading("正在添加，请稍后..."); // 打开遮罩层
+                    setTimeout(function() {
+                        // 3秒后再执行
+                        if (resp.msg === "操作成功") {
+                            $.modal.msgSuccess("成功反馈");
+                            $.modal.alertSuccess("添加成功");
+                            $.modal.closeTab(); // 关闭选项卡
+                        } else {
+                            $.modal.msgError("失败反馈");
+                            $.modal.alertError("添加失败");
+                        }
+                        $.modal.closeLoading(); // 关闭遮罩层
+                    }, 3000); // 3000毫秒等于3秒
+
+                },
+                error:function(xhr,type,errorThrown){
+                    console.log('XMLHttpRequest 对象:',xhr);
+                    console.log('错误类型:', type);
+                    console.log('错误描述:', errorThrown);
+                    $.modal.alertError("请求失败");
+                }
+            })
+        }
+    </script>
+
+    <script src="https://gosspublic.alicdn.com/aliyun-oss-sdk-6.18.0.min.js"></script>
+    <script>
+        const client = new OSS({
+            // yourRegion填写Bucket所在地域。以华东1（杭州）为例，yourRegion填写为oss-cn-hangzhou。oss-cn-hangzhou.aliyuncs.com
+            region: "oss-cn-hangzhou",
+            // 从STS服务获取的临时访问密钥（AccessKey ID和AccessKey Secret）。
+            accessKeyId: "LTAI5t9hu3M5rVpqnbfjqhud",
+            accessKeySecret: "aukElPnFVJMJmCeTr30FlF9PCkpT0c",
+            // 从STS服务获取的安全令牌（SecurityToken）。
+            //stsToken: "yourSecurityToken",
+            // 填写Bucket名称。
+            bucket: "zgfjava1218",
+        });
+
+        // 从输入框获取file对象，例如<input type="file" id="file" />。
+        let data;
+        // 创建并填写Blob数据。
+        //const data = new Blob(['Hello OSS']);
+        // 创建并填写OSS Buffer内容。
+        //const data = new OSS.Buffer(['Hello OSS']);
+
+        async function putObject(data) {
+            try {
+                // 填写Object完整路径。Object完整路径中不能包含Bucket名称。
+                // 您可以通过自定义文件名（例如exampleobject.txt）或文件完整路径（例如exampledir/exampleobject.txt）的形式实现将数据上传到当前Bucket或Bucket中的指定目录。
+                // data对象可以自定义为file对象、Blob数据或者OSS Buffer。
+                const options = {
+                    meta: { temp: "demo" },
+                    mime: "json",
+                    headers: { "Content-Type": "text/plain" },
+                };
+                const result = await client.put(data.name, data, options);
+                var url = result.url;
+                console.log(url);
+                document.getElementById("img").value = url;
+                console.log(result);
+                $.modal.closeLoading(); // 关闭遮罩层
+                submitAddFruitForm(); // 提交表单
+            } catch (e) {
+                console.log(e);
+            }
+        }
+        const addFruit = document.getElementById("addFruit");
+        addFruit.addEventListener("click", () => {
+            $.modal.loading("正在上传云图片，请稍后..."); // 打开遮罩层
+            const data = file.files[0];
+            putObject(data);
+        });
+
+    </script>
+    <script>
+        document.getElementById('file').addEventListener('change', function() {
+            var file = this.files[0]; // 获取选中的文件
+            var reader = new FileReader(); // 创建 FileReader 对象
+
+            reader.onloadend = function() {
+                document.getElementById('previewImage').src = reader.result; // 设置预览图的源为读取到的数据 URL
+            }
+
+            if (file) {
+                reader.readAsDataURL(file); // 读取文件内容为 Data URL
+            } else {
+                document.getElementById('previewImage').src = ""; // 如果未选择文件，清空预览图
+            }
+        });
+    </script>
+    <script th:inline="javascript">
+        $(document).ready(function() {
+            selectFruitTypeCode();
+        });
+        var fruittypesMap = {}; // 创建一个空对象
+        function selectFruitTypeCode() {
+            $.ajax({
+                url: "/inventory/fruittypes/name",
+                dataType: "json",
+                type: "post",
+                success: function (resp) {
+                    $("#fruittypesName").empty();
+                    $("<option disabled selected></option>").html("请选择").appendTo("#fruittypesName");
+                    console.clear();
+                    for (let i = 0; i < resp.fruittypes.length; i++) {
+                        var fruittypes = resp.fruittypes[i];
+                        console.log(fruittypes);
+                        fruittypesMap[fruittypes.name] = fruittypes.code; // 将fruittypes.name作为键，fruittypes.code作为值存入对象中
+                        $("<option></option>").html(fruittypes.name).appendTo("#fruittypesName");
+                    }
+                },
+                error:function(xhr,type,errorThrown){
+                    console.log('XMLHttpRequest 对象:',xhr);
+                    console.log('错误类型:', type);
+                    console.log('错误描述:', errorThrown);
+                    $.modal.alertError("请求失败");
+                }
+            })
+        }
+        $(document).ready(function () {
+            $("#fruittypesName").on('change', function () {
+                var fruittypesName = $("#fruittypesName").val();
+                console.log(fruittypesName);
+                var fruittypesCode = fruittypesMap[fruittypesName];
+                console.log(fruittypesCode);
+                $("#fruittypesId").val(fruittypesCode);
+            })
+        })
+
+    </script>
+
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var prefix = ctx + "inventory/fruits"
+        $("#form-fruits-add").validate({
+            focusCleanup: true
+        });
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/add", $('#form-fruits-add').serialize());
+            }
+        }
+
+    </script>
+</body>
+</html>

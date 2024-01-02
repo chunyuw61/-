@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改门店库存')" />
+    <script src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.3.1/jquery.min.js"></script>
+    <!-- 图标库 -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <script>
+        // 修改重量
+        $(document).ready(function() {
+            $("#updateNumber").click(function() {
+                console.log("修改重量执行");
+                var input = document.getElementById('number'); // 获取重量输入框元素
+                input.readOnly = !input.readOnly;
+            });
+        });
+        // 增加库存
+        function addNumber() {
+            let number = $("#number").val(); // 获取当前重量
+            console.log("当前库存:" + number);
+            let addOfNumber = $("#addNumberInput").val(); // 获取要增加的重量
+            console.log("增加的重量:" + addOfNumber);
+            number = parseFloat(number) + parseFloat(addOfNumber); // 计算增加后的重量
+            console.log("增加后的重量:" + number);
+            $("#number").val(number);
+        }
+        // 减少库存
+        function decreaseNumber() {
+            let number = $("#number").val(); // 获取当前重量
+            console.log("当前库存:" + number);
+            let decreaseOfNumber = $("#decreaseNumberInput").val(); // 获取要减少的重量
+            console.log("减少的重量:" + decreaseOfNumber);
+            if (number < decreaseOfNumber) {
+                alert("不可大于当前库存量!")
+            } else {
+                number = parseFloat(number) - parseFloat(decreaseOfNumber); // 计算减少后的重量
+                console.log("减少后的重量:" + number);
+                $("#number").val(number);
+            }
+        }
+    </script>
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-storeinventory-edit" th:object="${storeinventory}">
+            <input name="inentorydetailsId" th:field="*{inentorydetailsId}" type="hidden">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label is-required">库存(kg)：</label>
+                <div class="col-sm-4">
+                    <input id="number" name="number" th:field="*{number}" class="form-control" type="text" required readonly>
+                </div>
+                <div class="col-sm-2" style="padding-right: 0;">
+                    <button id="updateNumber" class="btn btn-info" type="button">修改库存</button>
+                </div>
+                <div class="col-sm-1" style="padding-left: 0;">
+                    <button class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" type="button">增加 <span class="caret"></span></button>
+                    <ul class="dropdown-menu" style="height: 115px;">
+                        <li>
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div class="form-group">
+                                        <div class="col-sm-10">
+                                            <div class="input-group">
+                                                <input class="form-control" id="addNumberInput" type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '')"/><span class="input-group-addon">kg</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-10">
+                                            <button type="button" id="addNumberBtn" name="addNumberBtn" onclick="addNumber()" class="btn-success">确定</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                <div class="col-sm-1">
+                    <button class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" type="button">减少 <span class="caret"></span></button>
+                    <ul class="dropdown-menu" style="height: 115px;" >
+                        <li>
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <div class="form-group">
+                                        <div class="col-sm-10">
+                                            <div class="input-group">
+                                                <input class="form-control" id="decreaseNumberInput" type="text" oninput="this.value = this.value.replace(/[^0-9.]/g, '')"/><span class="input-group-addon">kg</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-sm-10">
+                                            <button type="button" id="decreaseNumberBtn" name="decreaseNumberBtn" onclick="decreaseNumber()" class="btn-success">确定</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var prefix = ctx + "inventory/storeinventory";
+        $("#form-storeinventory-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-storeinventory-edit').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

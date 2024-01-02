@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.inventory.mapper.WarehousestockMapper">
+    
+    <resultMap type="Warehousestock" id="WarehousestockResult">
+        <result property="whId"    column="wh_id"    />
+        <result property="wId"    column="w_id"    />
+        <result property="fruitId"    column="fruit_id"    />
+        <result property="fruittypesId"    column="fruitTypes_id"    />
+        <result property="fruitName"    column="fruit_name"    />
+        <result property="jinjia"    column="jinjia"    />
+        <result property="whCount"    column="wh_count"    />
+        <result property="REVISION"    column="REVISION"    />
+        <result property="createdBy"    column="CREATED_BY"    />
+        <result property="createdTime"    column="CREATED_TIME"    />
+        <result property="updatedBy"    column="UPDATED_BY"    />
+        <result property="updatedTime"    column="UPDATED_TIME"    />
+        <result property="isStatus"    column="is_status"    />
+    </resultMap>
+
+    <!--  仓库信息表的返回Map集合  -->
+    <resultMap type="Warehouse" id="WarehouseResult">
+        <result property="wId"    column="w_id"    />
+        <result property="wNumber"    column="w_number"    />
+        <result property="wName"    column="w_name"    />
+        <result property="wAddress"    column="w_address"    />
+        <result property="phone"    column="phone"    />
+        <result property="REVISION"    column="REVISION"    />
+        <result property="createdBy"    column="CREATED_BY"    />
+        <result property="createdTime"    column="CREATED_TIME"    />
+        <result property="updatedBy"    column="UPDATED_BY"    />
+        <result property="updatedTime"    column="UPDATED_TIME"    />
+        <result property="isStatus"    column="is_status"    />
+    </resultMap>
+
+    <sql id="selectWarehousestockVo">
+        select wh_id, w_id, fruit_id, fruitTypes_id, fruit_name, jinjia, wh_count, REVISION, CREATED_BY, CREATED_TIME, UPDATED_BY, UPDATED_TIME, is_status from warehousestock
+    </sql>
+
+    <select id="selectWarehousestockList" parameterType="Warehousestock" resultMap="WarehousestockResult">
+        <include refid="selectWarehousestockVo"/>
+        <where>  
+            <if test="wId != null and wId != ''"> and w_id = #{wId}</if>
+            <if test="fruitId != null and fruitId != ''"> and fruit_id = #{fruitId}</if>
+            <if test="fruittypesId != null  and fruittypesId != ''"> and fruitTypes_id = #{fruittypesId}</if>
+            <if test="fruitName != null  and fruitName != ''"> and fruit_name like concat('%', #{fruitName}, '%')</if>
+            <if test="jinjia != null  and jinjia != ''"> and jinjia = #{jinjia}</if>
+            <if test="isStatus != null "> and is_status = #{isStatus}</if>
+        </where>
+    </select>
+    
+    <select id="selectWarehousestockByWhId" parameterType="Long" resultMap="WarehousestockResult">
+        <include refid="selectWarehousestockVo"/>
+        where wh_id = #{whId}
+    </select>
+
+<!--  查询对应仓库中的水果编号  -->
+    <select id="selectFruitId" resultType="String">
+        select fruit_id from warehousestock where w_id = #{wId}
+    </select>
+
+<!--  根据仓库编号 查询仓库名称  -->
+    <select id="selectWareHouseName" parameterType="String" resultType="String">
+        select w_name from warehouse where w_number = #{wNumber}
+    </select>
+
+<!--  根据水果种类编号 查询水果种类名称  -->
+    <select id="selectFruitTypeName" parameterType="String" resultType="String">
+        select name from fruittypes where code = #{code}
+    </select>
+
+<!--  查询仓库编号, 及仓库名称  -->
+    <!--  查询所有的仓库编号,及仓库名称  -->
+    <select id="selectWid" resultMap="WarehouseResult">
+        select w_number, w_name from warehouse
+    </select>
+
+    <insert id="insertWarehousestock" parameterType="Warehousestock" useGeneratedKeys="true" keyProperty="whId">
+        insert into warehousestock
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="wId != null and wId != ''">w_id,</if>
+            <if test="fruitId != null and fruitId != ''">fruit_id,</if>
+            <if test="fruittypesId != null and fruittypesId != ''">fruitTypes_id,</if>
+            <if test="fruitName != null and fruitName != ''">fruit_name,</if>
+            <if test="jinjia != null and jinjia != ''">jinjia,</if>
+            <if test="whCount != null">wh_count,</if>
+            <if test="REVISION != null">REVISION,</if>
+            <if test="createdBy != null">CREATED_BY,</if>
+            <if test="createdTime != null">CREATED_TIME,</if>
+            <if test="updatedBy != null">UPDATED_BY,</if>
+            <if test="updatedTime != null">UPDATED_TIME,</if>
+            <if test="isStatus != null">is_status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="wId != null and wId != ''">#{wId},</if>
+            <if test="fruitId != null and fruitId != ''">#{fruitId},</if>
+            <if test="fruittypesId != null and fruittypesId != ''">#{fruittypesId},</if>
+            <if test="fruitName != null and fruitName != ''">#{fruitName},</if>
+            <if test="jinjia != null and jinjia != ''">#{jinjia},</if>
+            <if test="whCount != null">#{whCount},</if>
+            <if test="REVISION != null">#{REVISION},</if>
+            <if test="createdBy != null">#{createdBy},</if>
+            <if test="createdTime != null">#{createdTime},</if>
+            <if test="updatedBy != null">#{updatedBy},</if>
+            <if test="updatedTime != null">#{updatedTime},</if>
+            <if test="isStatus != null">#{isStatus},</if>
+         </trim>
+    </insert>
+
+    <insert id="insertprice" parameterType="Warehousestock">
+        insert into fruit_price (code, name) value (#{fruitId}, #{fruitName})
+    </insert>
+
+    <update id="updateWarehousestock" parameterType="Warehousestock">
+        update warehousestock
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="wId != null and wId != ''">w_id = #{wId},</if>
+            <if test="fruitId != null and fruitId != ''">fruit_id = #{fruitId},</if>
+            <if test="fruittypesId != null and fruittypesId != ''">fruitTypes_id = #{fruittypesId},</if>
+            <if test="fruitName != null and fruitName != ''">fruit_name = #{fruitName},</if>
+            <if test="jinjia != null and jinjia != ''">jinjia = #{jinjia},</if>
+            <if test="whCount != null">wh_count = #{whCount},</if>
+            <if test="REVISION != null">REVISION = #{REVISION},</if>
+            <if test="createdBy != null">CREATED_BY = #{createdBy},</if>
+            <if test="createdTime != null">CREATED_TIME = #{createdTime},</if>
+            <if test="updatedBy != null">UPDATED_BY = #{updatedBy},</if>
+            <if test="updatedTime != null">UPDATED_TIME = #{updatedTime},</if>
+            <if test="isStatus != null">is_status = #{isStatus},</if>
+        </trim>
+        where wh_id = #{whId}
+    </update>
+
+    <update id="whCountClearWhId" parameterType="Long">
+        update warehousestock set wh_count = 0 where wh_id = #{whId}
+    </update>
+
+    <update id="deleteWarehousestockByWhIds" parameterType="String">
+        update warehousestock set wh_count = 0 where wh_id in
+        <foreach item="whId" collection="array" open="(" separator="," close=")">
+            #{whId}
+        </foreach>
+    </update>
+
+</mapper>
