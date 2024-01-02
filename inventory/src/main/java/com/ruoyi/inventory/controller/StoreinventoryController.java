@@ -4,9 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.ruoyi.inventory.domain.Shop;
+import com.ruoyi.orderforgoods.domain.Shop;
 import com.ruoyi.inventory.domain.Warehouse;
-import com.ruoyi.inventory.domain.Warehousestock;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

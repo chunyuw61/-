@@ -2,9 +2,9 @@ package com.ruoyi.inventory.mapper;
 
 import java.util.List;
 
-import com.ruoyi.inventory.domain.Shop;
 import com.ruoyi.inventory.domain.Storeinventory;
 import com.ruoyi.inventory.domain.Warehouse;
+import com.ruoyi.orderforgoods.domain.Shop;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

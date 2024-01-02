@@ -2,9 +2,8 @@ package com.ruoyi.inventory.service.impl;
 
 import java.util.List;
 
-import com.ruoyi.inventory.domain.Shop;
 import com.ruoyi.inventory.domain.Warehouse;
-import com.ruoyi.inventory.domain.Warehousestock;
+import com.ruoyi.orderforgoods.domain.Shop;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.inventory.mapper.StoreinventoryMapper;

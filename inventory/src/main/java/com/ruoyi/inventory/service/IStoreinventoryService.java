@@ -2,10 +2,9 @@ package com.ruoyi.inventory.service;
 
 import java.util.List;
 
-import com.ruoyi.inventory.domain.Shop;
 import com.ruoyi.inventory.domain.Storeinventory;
 import com.ruoyi.inventory.domain.Warehouse;
-import com.ruoyi.inventory.domain.Warehousestock;
+import com.ruoyi.orderforgoods.domain.Shop;
 
 /**
  * 门店库存Service接口

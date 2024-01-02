@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.orderforgoods.mapper.SalesorderdetailsMapper">
+    
+    <resultMap type="Salesorderdetails" id="SalesorderdetailsResult">
+        <result property="salesorderdetailsId"    column="SalesOrderDetails_id"    />
+        <result property="oId"    column="o_id"    />
+        <result property="fruitpriceId"    column="fruitPrice_id"    />
+        <result property="count"    column="count"    />
+        <result property="money"    column="money"    />
+        <result property="totalmoney"    column="totalmoney"    />
+        <result property="datetime"    column="datetime"    />
+        <result property="REVISION"    column="REVISION"    />
+        <result property="createdBy"    column="CREATED_BY"    />
+        <result property="createdTime"    column="CREATED_TIME"    />
+        <result property="updatedBy"    column="UPDATED_BY"    />
+        <result property="updatedTime"    column="UPDATED_TIME"    />
+        <result property="sId"    column="s_id"    />
+    </resultMap>
+
+    <sql id="selectSalesorderdetailsVo">
+        select SalesOrderDetails_id, o_id, fruitPrice_id, count, money, totalmoney, datetime, REVISION, CREATED_BY, CREATED_TIME, UPDATED_BY, UPDATED_TIME, s_id from salesorderdetails
+    </sql>
+
+    <select id="selectSalesorderdetailsList" parameterType="Salesorderdetails" resultMap="SalesorderdetailsResult">
+        <include refid="selectSalesorderdetailsVo"/>
+        <where>  
+            <if test="salesorderdetailsId != null "> and SalesOrderDetails_id = #{salesorderdetailsId}</if>
+            <if test="oId != null "> and o_id = #{oId}</if>
+            <if test="fruitpriceId != null "> and fruitPrice_id = #{fruitpriceId}</if>
+            <if test="count != null "> and count = #{count}</if>
+            <if test="money != null "> and money = #{money}</if>
+            <if test="totalmoney != null  and totalmoney != ''"> and totalmoney = #{totalmoney}</if>
+            <if test="datetime != null "> and datetime = #{datetime}</if>
+            <if test="REVISION != null "> and REVISION = #{REVISION}</if>
+            <if test="createdBy != null  and createdBy != ''"> and CREATED_BY = #{createdBy}</if>
+            <if test="createdTime != null "> and CREATED_TIME = #{createdTime}</if>
+            <if test="updatedBy != null  and updatedBy != ''"> and UPDATED_BY = #{updatedBy}</if>
+            <if test="updatedTime != null "> and UPDATED_TIME = #{updatedTime}</if>
+            <if test="sId != null  and sId != ''"> and s_id = #{sId}</if>
+        </where>
+    </select>
+    
+    <select id="selectSalesorderdetailsBySalesorderdetailsId" parameterType="Long" resultMap="SalesorderdetailsResult">
+        <include refid="selectSalesorderdetailsVo"/>
+        where SalesOrderDetails_id = #{salesorderdetailsId}
+    </select>
+        
+    <insert id="insertSalesorderdetails" parameterType="Salesorderdetails">
+        insert into salesorderdetails
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="salesorderdetailsId != null">SalesOrderDetails_id,</if>
+            <if test="oId != null">o_id,</if>
+            <if test="fruitpriceId != null">fruitPrice_id,</if>
+            <if test="count != null">count,</if>
+            <if test="money != null">money,</if>
+            <if test="totalmoney != null">totalmoney,</if>
+            <if test="datetime != null">datetime,</if>
+            <if test="REVISION != null">REVISION,</if>
+            <if test="createdBy != null">CREATED_BY,</if>
+            <if test="createdTime != null">CREATED_TIME,</if>
+            <if test="updatedBy != null">UPDATED_BY,</if>
+            <if test="updatedTime != null">UPDATED_TIME,</if>
+            <if test="sId != null">s_id,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="salesorderdetailsId != null">#{salesorderdetailsId},</if>
+            <if test="oId != null">#{oId},</if>
+            <if test="fruitpriceId != null">#{fruitpriceId},</if>
+            <if test="count != null">#{count},</if>
+            <if test="money != null">#{money},</if>
+            <if test="totalmoney != null">#{totalmoney},</if>
+            <if test="datetime != null">#{datetime},</if>
+            <if test="REVISION != null">#{REVISION},</if>
+            <if test="createdBy != null">#{createdBy},</if>
+            <if test="createdTime != null">#{createdTime},</if>
+            <if test="updatedBy != null">#{updatedBy},</if>
+            <if test="updatedTime != null">#{updatedTime},</if>
+            <if test="sId != null">#{sId},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSalesorderdetails" parameterType="Salesorderdetails">
+        update salesorderdetails
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="oId != null">o_id = #{oId},</if>
+            <if test="fruitpriceId != null">fruitPrice_id = #{fruitpriceId},</if>
+            <if test="count != null">count = #{count},</if>
+            <if test="money != null">money = #{money},</if>
+            <if test="totalmoney != null">totalmoney = #{totalmoney},</if>
+            <if test="datetime != null">datetime = #{datetime},</if>
+            <if test="REVISION != null">REVISION = #{REVISION},</if>
+            <if test="createdBy != null">CREATED_BY = #{createdBy},</if>
+            <if test="createdTime != null">CREATED_TIME = #{createdTime},</if>
+            <if test="updatedBy != null">UPDATED_BY = #{updatedBy},</if>
+            <if test="updatedTime != null">UPDATED_TIME = #{updatedTime},</if>
+            <if test="sId != null">s_id = #{sId},</if>
+        </trim>
+        where SalesOrderDetails_id = #{salesorderdetailsId}
+    </update>
+
+    <delete id="deleteSalesorderdetailsBySalesorderdetailsId" parameterType="Long">
+        delete from salesorderdetails where SalesOrderDetails_id = #{salesorderdetailsId}
+    </delete>
+
+    <delete id="deleteSalesorderdetailsBySalesorderdetailsIds" parameterType="String">
+        delete from salesorderdetails where SalesOrderDetails_id in 
+        <foreach item="salesorderdetailsId" collection="array" open="(" separator="," close=")">
+            #{salesorderdetailsId}
+        </foreach>
+    </delete>
+
+
+<!--
+    <insert id="insertSalesorderdetails" parameterType="Salesorderdetails">
+        insert into salesorderdetails
+            (o_id, fruitPrice_id, count, money, totalmoney, datetime)
+        values
+            (#{oId}, #{fruitpriceId}, #{count}, #{money}, #{totalmoney}, #{datetime})
+    </insert>
+-->
+
+</mapper>
