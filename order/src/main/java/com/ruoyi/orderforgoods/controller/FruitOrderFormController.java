@@ -12,14 +12,10 @@ import com.ruoyi.orderforgoods.service.impl.DoororderServiceImpl;
 import com.ruoyi.orderforgoods.service.impl.SalesStatisticsServiceImpl;
 import com.ruoyi.orderforgoods.service.impl.SalesorderdetailsServiceImpl;
 import com.ruoyi.orderforgoods.utility.OrderUtil;
-import com.ruoyi.orderforgoods.utility.ShopUtil;
 import com.ruoyi.orderforgoods.utility.TimeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -51,34 +47,24 @@ public class FruitOrderFormController {
     // 使用@PostMapping注解来处理POST请求
     @PostMapping("/insert")
     public ResponseEntity<Void> insertSalesorderdetails(@RequestBody List<Salesorderdetails> salesorderdetailsList) {
-        // 生成订单号
         String i = OrderUtil.generateOrderNumber();
-        // 获取当前时间
         Date j = TimeUtil.getCurrentTime();
-        // 创建一个新的Doororder对象
         Doororder doororder = new Doororder();
-        // 设置门店ID
-        doororder.setsId(ShopUtil.shopName());
-        // 设置订单号
         doororder.setoNum(i);
-        // 初始化总金额
         BigDecimal b = null;
-        // 遍历销售订单明细列表
         for (Salesorderdetails salesorderdetails : salesorderdetailsList) {
-            // 设置订单ID
-            salesorderdetails.setOId(i);
-            // 设置日期时间
+            System.out.println(salesorderdetails);
+            System.out.println("salesorderdetails.getSId()"+salesorderdetails.getsId());
+            doororder.setsId(salesorderdetails.getsId());
+            System.out.println("---------------门店id是---------------"+doororder.getsId());
+            salesorderdetails.setoId(i);
             salesorderdetails.setDatetime(j);
-            // 如果总金额为空，则设置总金额为当前销售订单明细的总金额
             if (b == null) {
                 b = salesorderdetails.getTotalmoney();
             }
-            // 插入销售订单明细
             salesorderdetailsService.insertSalesorderdetails(salesorderdetails);
         }
-        // 设置Doororder的金额
         doororder.setMoney(b);
-        // 插入Doororder
         int i1 = doororderService.insertDoororder(doororder);
         if (b == null) {
             System.out.println("金额为空,不算客流量");

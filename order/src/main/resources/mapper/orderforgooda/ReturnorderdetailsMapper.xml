@@ -19,6 +19,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updatedTime"    column="UPDATED_TIME"    />
         <result property="isStatus"    column="is_status"    />
         <result property="examine"    column="examine"    />
+
     </resultMap>
 
     <sql id="selectReturnorderdetailsVo">

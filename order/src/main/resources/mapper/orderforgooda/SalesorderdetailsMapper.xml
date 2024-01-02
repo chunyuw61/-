@@ -17,10 +17,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="createdTime"    column="CREATED_TIME"    />
         <result property="updatedBy"    column="UPDATED_BY"    />
         <result property="updatedTime"    column="UPDATED_TIME"    />
+        <result property="sId"    column="s_id"    />
     </resultMap>
 
     <sql id="selectSalesorderdetailsVo">
-        select SalesOrderDetails_id, o_id, fruitPrice_id, count, money, totalmoney, datetime, REVISION, CREATED_BY, CREATED_TIME, UPDATED_BY, UPDATED_TIME from salesorderdetails
+        select SalesOrderDetails_id, o_id, fruitPrice_id, count, money, totalmoney, datetime, REVISION, CREATED_BY, CREATED_TIME, UPDATED_BY, UPDATED_TIME, s_id from salesorderdetails
     </sql>
 
     <select id="selectSalesorderdetailsList" parameterType="Salesorderdetails" resultMap="SalesorderdetailsResult">
@@ -38,6 +39,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createdTime != null "> and CREATED_TIME = #{createdTime}</if>
             <if test="updatedBy != null  and updatedBy != ''"> and UPDATED_BY = #{updatedBy}</if>
             <if test="updatedTime != null "> and UPDATED_TIME = #{updatedTime}</if>
+            <if test="sId != null  and sId != ''"> and s_id = #{sId}</if>
         </where>
     </select>
     
@@ -61,6 +63,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createdTime != null">CREATED_TIME,</if>
             <if test="updatedBy != null">UPDATED_BY,</if>
             <if test="updatedTime != null">UPDATED_TIME,</if>
+            <if test="sId != null">s_id,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
             <if test="salesorderdetailsId != null">#{salesorderdetailsId},</if>
@@ -75,6 +78,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createdTime != null">#{createdTime},</if>
             <if test="updatedBy != null">#{updatedBy},</if>
             <if test="updatedTime != null">#{updatedTime},</if>
+            <if test="sId != null">#{sId},</if>
          </trim>
     </insert>
 
@@ -92,6 +96,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="createdTime != null">CREATED_TIME = #{createdTime},</if>
             <if test="updatedBy != null">UPDATED_BY = #{updatedBy},</if>
             <if test="updatedTime != null">UPDATED_TIME = #{updatedTime},</if>
+            <if test="sId != null">s_id = #{sId},</if>
         </trim>
         where SalesOrderDetails_id = #{salesorderdetailsId}
     </update>
