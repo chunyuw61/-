@@ -188,6 +188,7 @@
                 <artifactId>order</artifactId>
                 <version>${ruoyi.version}</version>
             </dependency>
+
             <!-- 库存管理 -->
             <dependency>
                 <groupId>com.ruoyi</groupId>
