@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('退货单明细列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>门店编号：</label>
+                                <input type="text" name="sId"/>
+                            </li>
+                            <li>
+                                <label>入库单编号：</label>
+                                <input type="text" name="warehousingId"/>
+                            </li>
+                            <li>
+                                <label>退货编号：</label>
+                                <input type="text" name="rdNumber"/>
+                            </li>
+                            <li>
+                                <label>水果类型：</label>
+                                <input type="text" name="fruittypesId"/>
+                            </li>
+                            <li>
+                                <label>水果编号：</label>
+                                <input type="text" name="fruitId"/>
+                            </li>
+                            <li>
+                                <label>重量：</label>
+                                <input type="text" name="rdCount"/>
+                            </li>
+                            <li>
+                                <label>乐观锁：</label>
+                                <input type="text" name="REVISION"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="returnorderdetails:returnorderdetails:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="returnorderdetails:returnorderdetails:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="returnorderdetails:returnorderdetails:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="returnorderdetails:returnorderdetails:export">
+                    <i class="fa fa-download"></i> 导出
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('returnorderdetails:returnorderdetails:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('returnorderdetails:returnorderdetails:remove')}]];
+        var prefix = ctx + "returnorderdetails/returnorderdetails";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "退货单明细",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'rdId',
+                    title: '主键',
+                    visible: false
+                },
+                {
+                    field: 'sId',
+                    title: '门店编号'
+                },
+                {
+                    field: 'warehousingId',
+                    title: '入库单编号'
+                },
+                {
+                    field: 'rdNumber',
+                    title: '退货编号'
+                },
+                {
+                    field: 'fruittypesId',
+                    title: '水果类型'
+                },
+                {
+                    field: 'fruitId',
+                    title: '水果编号'
+                },
+                {
+                    field: 'rdCount',
+                    title: '重量'
+                },
+                {
+                    field: 'REVISION',
+                    title: '乐观锁'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.rdId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.rdId + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>

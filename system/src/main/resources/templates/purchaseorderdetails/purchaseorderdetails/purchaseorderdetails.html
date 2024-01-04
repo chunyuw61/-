@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('进货单明细列表')" />
+    <script src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.1.1/jquery.min.js"></script>
+</head>
+<body class="gray-bg">
+<!-------------------------------------------->
+<div class="modal fade" tabindex="-1" role="dialog" id="myModal">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title">退货</h4>
+            </div>
+            <div class="modal-body">
+                <label>退货数量</label>
+                <input type="number" class="form-control" id="returnNum" placeholder="请输入退货数量">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-primary" onclick="confirmBao()">保存</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
+<!------------------------------------------------------------>
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>门店编号：</label>
+                                <input type="text" name="sId"/>
+                            </li>
+                            <li>
+                                <label>水果进货单号：</label>
+                                <input type="text" name="pNumber"/>
+                            </li>
+                            <li>
+                                <label>水果种类：</label>
+                                <input type="text" name="fruittypesId"/>
+                            </li>
+                            <li>
+                                <label>水果编号：</label>
+                                <input type="text" name="fruitId"/>
+                            </li>
+                            <li>
+                                <label>水果名称：</label>
+                                <input type="text" name="fruitName"/>
+                            </li>
+                            <li>
+                                <label>数量：</label>
+                                <input type="text" name="number"/>
+                            </li>
+                            <li>
+                                <label>进货单价：</label>
+                                <input type="text" name="price"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="purchaseorderdetails:purchaseorderdetails:add">
+                    <i class="fa fa-plus"></i> 添加
+                </a>
+                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="purchaseorderdetails:purchaseorderdetails:edit">
+                    <i class="fa fa-edit"></i> 修改
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="purchaseorderdetails:purchaseorderdetails:remove">
+                    <i class="fa fa-remove"></i> 删除
+                </a>
+                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="purchaseorderdetails:purchaseorderdetails:export">
+                    <i class="fa fa-download"></i> 导出
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('purchaseorderdetails:purchaseorderdetails:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('purchaseorderdetails:purchaseorderdetails:remove')}]];
+        var prefix = ctx + "purchaseorderdetails/purchaseorderdetails";
+        var pNumber;
+        var pId;
+        var number;
+        var isStatus;
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "进货单明细",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'pId',
+                    title: '主键',
+                    visible: false
+                },
+                {
+                    field: 'sId',
+                    title: '门店编号'
+                },
+                {
+                    field: 'pNumber',
+                    title: '水果进货单号'
+                },
+                {
+                    field: 'fruittypesId',
+                    title: '水果种类'
+                },
+                {
+                    field: 'fruitId',
+                    title: '水果编号'
+                },
+                {
+                    field: 'fruitName',
+                    title: '水果名称'
+                },
+                {
+                    field: 'number',
+                    title: '数量'
+                },
+                {
+                    field: 'price',
+                    title: '进货单价'
+                },
+                {
+                    field: 'isStatus',
+                    title: '订单状态(0:驳回, 1: 审批中, 2:审批通过,正在出库, 3:订单完成 )'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        pNumber = row.pNumber;
+                        pId = row.pId;
+                        number = row.number;
+                        isStatus = row.isStatus;
+                            actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.pId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                            actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.pId + '\')"><i class="fa fa-remove"></i>删除</a>');
+                            actions.push('<a class="btn btn-primary btn-xs ' + '" href="javascript:void(0)" onclick="confirmReceipt(\'' + row.pId + '\')"><i class="fa fa-check" id="shouhuo"></i>确认收货</a>');
+                            actions.push('<button data-toggle="modal" data-target="#myModal " class="btn btn-warning btn-xs" onclick="/*backReceipt(\'' + row.pId + '\')*/"><i class="fa fa-th"></i>退货</>');
+                            // actions.push('<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal"> A</button>');
+                            return actions.join('');
+
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+
+    </script>
+
+    <script>
+        function confirmReceipt(pId) {
+            console.log(isStatus)
+            $.modal.confirm("确认收货吗？", function() {
+                $.ajax({
+                    url:"/purchaseorderdetails/purchaseorderdetails/confirm",
+                    type:"post",
+                    dataType:"json",
+                    data:{"pId":pId},
+                    success:function (res){
+                        if(res == 1){
+                            $.modal.msgSuccess("确认收货成功");
+                        }else{
+                            $.modal.msgError("确认收货失败");
+                        }
+                    }
+                })
+            })
+        }
+    </script>
+
+
+    <script>
+        function confirmBao() {
+            var elementById = document.getElementById("myModal");
+            let returnNum = document.getElementById("returnNum").value;
+            if(returnNum > number){
+                alert("输入数量不合法")
+            }else{
+                $.ajax({
+                    url: "/purchaseorderdetails/purchaseorderdetails/back",
+                    type: "post",
+                    dataType: "json",
+                    data: {"pId": pId, "returnNum": returnNum},
+                    success: function (res) {
+                        if (res == true) {
+                            $.modal.msgSuccess("退货成功");
+                            elementById.style.display = "none";
+                        } else {
+                            $.modal.msgError("退货失败");
+                            elementById.style.display = "none";
+                        }
+                    }
+                });
+            }
+
+        }
+    </script>
+</body>
+</html>

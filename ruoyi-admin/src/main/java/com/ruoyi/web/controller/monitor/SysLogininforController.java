@@ -15,8 +15,8 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.page.TableDataInfo;
 import com.ruoyi.common.enums.BusinessType;
 import com.ruoyi.common.utils.poi.ExcelUtil;
-import com.ruoyi.system.domain.SysLogininfor;
-import com.ruoyi.system.service.ISysLogininforService;
+import com.ruoyi.warehousing.domain.SysLogininfor;
+import com.ruoyi.warehousing.service.ISysLogininforService;
 
 /**
  * 系统访问记录

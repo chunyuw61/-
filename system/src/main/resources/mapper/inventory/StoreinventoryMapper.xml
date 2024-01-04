@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.guoran.inventory.mapper.StoreinventoryMapper">
+    
+    <resultMap type="Storeinventory" id="StoreinventoryResult">
+        <result property="inentorydetailsId"    column="InentoryDetails_id"    />
+        <result property="shopId"    column="shop_id"    />
+        <result property="fruittypesId"    column="fruittypes_id"    />
+        <result property="fruitId"    column="fruit_id"    />
+        <result property="number"    column="number"    />
+        <result property="isStatus"    column="is_status"    />
+        <result property="REVISION"    column="REVISION"    />
+        <result property="createdBy"    column="CREATED_BY"    />
+        <result property="createdTime"    column="CREATED_TIME"    />
+        <result property="updatedBy"    column="UPDATED_BY"    />
+        <result property="updatedTime"    column="UPDATED_TIME"    />
+    </resultMap>
+
+<!--  仓库信息表的返回Map集合  -->
+    <resultMap type="Warehouse" id="WarehouseResult">
+        <result property="wId"    column="w_id"    />
+        <result property="wNumber"    column="w_number"    />
+        <result property="wName"    column="w_name"    />
+        <result property="wAddress"    column="w_address"    />
+        <result property="phone"    column="phone"    />
+        <result property="REVISION"    column="REVISION"    />
+        <result property="createdBy"    column="CREATED_BY"    />
+        <result property="createdTime"    column="CREATED_TIME"    />
+        <result property="updatedBy"    column="UPDATED_BY"    />
+        <result property="updatedTime"    column="UPDATED_TIME"    />
+        <result property="isStatus"    column="is_status"    />
+    </resultMap>
+
+<!--  门店信息表的返回Map集合  -->
+    <resultMap type="Shop" id="ShopResult">
+        <result property="sId"    column="s_id"    />
+        <result property="sNumber"    column="s_number"    />
+        <result property="sName"    column="s_name"    />
+        <result property="sAddress"    column="s_address"    />
+        <result property="ren"    column="ren"    />
+        <result property="phone"    column="phone"    />
+        <result property="img"    column="img"    />
+        <result property="REVISION"    column="REVISION"    />
+        <result property="createdBy"    column="CREATED_BY"    />
+        <result property="createdTime"    column="CREATED_TIME"    />
+        <result property="updatedBy"    column="UPDATED_BY"    />
+        <result property="updatedTime"    column="UPDATED_TIME"    />
+        <result property="isStatus"    column="is_status"    />
+    </resultMap>
+
+    <resultMap type="Warehousestock" id="WarehousestockResult">
+        <result property="whId"    column="wh_id"    />
+        <result property="wId"    column="w_id"    />
+        <result property="fruitId"    column="fruit_id"    />
+        <result property="fruittypesId"    column="fruitTypes_id"    />
+        <result property="fruitName"    column="fruit_name"    />
+        <result property="jinjia"    column="jinjia"    />
+        <result property="whCount"    column="wh_count"    />
+        <result property="REVISION"    column="REVISION"    />
+        <result property="createdBy"    column="CREATED_BY"    />
+        <result property="createdTime"    column="CREATED_TIME"    />
+        <result property="updatedBy"    column="UPDATED_BY"    />
+        <result property="updatedTime"    column="UPDATED_TIME"    />
+        <result property="isStatus"    column="is_status"    />
+    </resultMap>
+
+    <sql id="selectStoreinventoryVo">
+        select InentoryDetails_id, shop_id, fruittypes_id, fruit_id, number, is_status, REVISION, CREATED_BY, CREATED_TIME, UPDATED_BY, UPDATED_TIME from storeinventory
+    </sql>
+
+    <select id="selectStoreinventoryList" parameterType="Storeinventory" resultMap="StoreinventoryResult">
+        select si.InentoryDetails_id, si.shop_id, si.fruittypes_id, si.fruit_id, si.number, si.is_status, si.CREATED_BY, si.CREATED_TIME, si.UPDATED_BY, si.UPDATED_TIME
+        from storeinventory si
+        left join sys_user u on u.dept_id = si.shop_id
+        left join sys_user u2 on u2.user_id = u.user_id
+        where u.del_flag = '0'
+
+        <if test="shopId != null  and shopId != ''"> and shop_id = #{shopId}</if>
+        <if test="fruittypesId != null  and fruittypesId != ''"> and fruittypes_id = #{fruittypesId}</if>
+        <if test="fruitId != null  and fruitId != ''"> and fruit_id = #{fruitId}</if>
+        <if test="number != null "> and number = #{number}</if>
+        <if test="isStatus != null "> and is_status = #{isStatus}</if>
+
+        <!-- 数据范围过滤 -->
+        ${params.dataScope}
+    </select>
+    
+    <select id="selectStoreinventoryByInentorydetailsId" parameterType="Long" resultMap="StoreinventoryResult">
+        <include refid="selectStoreinventoryVo"/>
+        where InentoryDetails_id = #{inentorydetailsId}
+    </select>
+    
+<!--  查询每个仓库中有的状态正常水果编号和水果种类编号  -->
+    <select id="selectWareHouseStockFruit" parameterType="String" resultMap="WarehousestockResult">
+        select fruitTypes_id, fruit_id from warehousestock where w_id = #{wId} and is_status = 1
+    </select>
+
+<!--  查询对应门店编号中所有的水果编号 -->
+    <select id="selectFruitId" resultType="String">
+        select fruit_id from storeinventory where shop_id = #{shopId}
+    </select>
+
+<!--  根据水果种类编号 查询水果种类名称  -->
+    <select id="selectFruitTypeName" parameterType="String" resultType="String">
+        select name from fruittypes where code = #{code}
+    </select>
+
+<!--  根据水果编号查询水果名称  -->
+    <select id="selectFruitName" parameterType="String" resultType="String">
+        select name from fruits where code = #{code}
+    </select>
+
+<!--  根据门店编号 查询门店名称  -->
+    <select id="selectShopName" parameterType="String" resultType="String">
+        select s_name from shop where s_number = #{sNumber}
+    </select>
+
+<!--  查询所有的仓库编号,及仓库名称  -->
+    <select id="selectWareHouseId" resultMap="WarehouseResult">
+        select w_number, w_name from warehouse
+    </select>
+<!--  查询所有的门店编号  -->
+    <select id="selectShopId" resultMap="ShopResult">
+        select s_number, s_name from shop
+    </select>
+<!--  根据登录门店的父级菜单id,去查询父级菜单的父级菜单的id  -->
+    <select id="selectParentIdByParentId" parameterType="int" resultType="int">
+        select parent_id from sys_dept where dept_id = #{parentId}
+    </select>
+
+    <insert id="insertStoreinventory" parameterType="Storeinventory" useGeneratedKeys="true" keyProperty="inentorydetailsId">
+        insert into storeinventory
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="shopId != null and shopId != ''">shop_id,</if>
+            <if test="fruittypesId != null and fruittypesId != ''">fruittypes_id,</if>
+            <if test="fruitId != null and fruitId != ''">fruit_id,</if>
+            <if test="number != null">number,</if>
+            <if test="isStatus != null">is_status,</if>
+            <if test="REVISION != null">REVISION,</if>
+            <if test="createdBy != null">CREATED_BY,</if>
+            <if test="createdTime != null">CREATED_TIME,</if>
+            <if test="updatedBy != null">UPDATED_BY,</if>
+            <if test="updatedTime != null">UPDATED_TIME,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="shopId != null and shopId != ''">#{shopId},</if>
+            <if test="fruittypesId != null and fruittypesId != ''">#{fruittypesId},</if>
+            <if test="fruitId != null and fruitId != ''">#{fruitId},</if>
+            <if test="number != null">#{number},</if>
+            <if test="isStatus != null">#{isStatus},</if>
+            <if test="REVISION != null">#{REVISION},</if>
+            <if test="createdBy != null">#{createdBy},</if>
+            <if test="createdTime != null">#{createdTime},</if>
+            <if test="updatedBy != null">#{updatedBy},</if>
+            <if test="updatedTime != null">#{updatedTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateStoreinventory" parameterType="Storeinventory">
+        update storeinventory
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="shopId != null and shopId != ''">shop_id = #{shopId},</if>
+            <if test="fruittypesId != null and fruittypesId != ''">fruittypes_id = #{fruittypesId},</if>
+            <if test="fruitId != null and fruitId != ''">fruit_id = #{fruitId},</if>
+            <if test="number != null">number = #{number},</if>
+            <if test="isStatus != null">is_status = #{isStatus},</if>
+            <if test="REVISION != null">REVISION = #{REVISION},</if>
+            <if test="createdBy != null">CREATED_BY = #{createdBy},</if>
+            <if test="createdTime != null">CREATED_TIME = #{createdTime},</if>
+            <if test="updatedBy != null">UPDATED_BY = #{updatedBy},</if>
+            <if test="updatedTime != null">UPDATED_TIME = #{updatedTime},</if>
+        </trim>
+        where InentoryDetails_id = #{inentorydetailsId}
+    </update>
+
+    <update id="deleteStoreinventoryByInentorydetailsId" parameterType="Long">
+        update storeinventory set number=0 where InentoryDetails_id = #{inentorydetailsId}
+    </update>
+
+    <update id="deleteStoreinventoryByInentorydetailsIds" parameterType="String">
+        update storeinventory set number=0 where InentoryDetails_id in
+        <foreach item="inentorydetailsId" collection="array" open="(" separator="," close=")">
+            #{inentorydetailsId}
+        </foreach>
+    </update>
+
+</mapper>

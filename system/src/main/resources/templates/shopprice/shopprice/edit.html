@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改门店价格')" />
+    <style>
+        .a li{
+            list-style: none;
+        }
+        .a .price{
+            margin-left: 280px;
+            font-size: 32px;
+        }
+        input{
+            border: none;
+            width: 50px;
+        }
+    </style>
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-shopprice-edit" th:object="${shopprice}">
+            <input name="shoppriceId" th:field="*{shoppriceId}" type="hidden">
+            <div class="form-group">
+                <ul  class="a">
+                    <li>
+                        <label>门店编号：</label>
+                        <input name="sNumber" th:field="*{sNumber}"  type="text">
+
+                    </li>
+                    <li>
+                        <label>水果名称：</label>
+                        <input name="name" th:field="*{name}"  type="text">
+                    </li>
+                    <li class="price">
+                        <label >水果零售价：</label>
+                        <input name="price" th:field="*{price}" type="text">
+                    </li>
+                    <li >
+                        <label >水果编号：</label>
+                        <input name="code" th:field="*{code}"  type="text">
+                    </li>
+
+                </ul>
+
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var prefix = ctx + "shopprice/shopprice";
+        $("#form-shopprice-edit").validate({
+            focusCleanup: true
+        });
+
+        // function submitHandler() {
+        //     if ($.validate.form()) {
+        //         $.operate.save(prefix + "/edit", $('#form-shopprice-edit').serialize());
+        //     }
+        // }
+    </script>
+</body>
+</html>
