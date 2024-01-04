@@ -78,6 +78,12 @@
             <artifactId>department</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>com.ruoyi</groupId>
+            <artifactId>guoran</artifactId>
+            <version>1.0</version>
+        </dependency>
+
     </dependencies>
 
     <build>

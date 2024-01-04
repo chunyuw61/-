@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="include :: header('修改退货统计')"/>
+    <th:block th:include="include :: datetimepicker-css"/>
+</head>
+<script src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.3.1/jquery.min.js"></script>
+<body class="white-bg">
+<div class="wrapper wrapper-content animated fadeInRight ibox-content">
+    <form class="form-horizontal m" id="form-statistics-edit" th:object="${returnStatistics}">
+        <input name="id" th:field="*{id}" type="hidden">
+        <div class="form-group">
+            <label class="col-sm-3 control-label">门店id：</label>
+            <div class="col-sm-8">
+                <p name="sId" th:text="*{sId}" class="form-control-static"></p>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">水果编号：</label>
+            <div class="col-sm-8">
+                <p name="fruitId" th:text="*{fruitId}" class="form-control-static"></p>
+            </div>
+        </div>
+    </form>
+
+    <table id="fruitTable" class="table table-striped table-bordered table-hover table-condensed text-center">
+        <tr>
+            <th>退货单号</th>
+            <th>重量(kg)</th>
+            <th>操作时间</th>
+        </tr>
+    </table>
+</div>
+<script>
+    $(document).ready(function () {
+        var sId = $("p[name='sId']").text();
+        var fruitId = $("p[name='fruitId']").text();
+        console.log(sId);
+        console.log(fruitId);
+        $.ajax({
+            url: 'http://localhost:80/examine/your',  // 替换为您的后端接口 URL
+            type: 'POST',
+            data: JSON.stringify({
+                'sId': sId,
+                'fruitId': fruitId
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (data) {
+                console.log(data);  // 打印返回的数据
+                // 假设返回的数据是一个数组，每个元素是一个包含 'rdNumber'，'rdCount' 和 'time' 属性的对象
+                $.each(data, function (i, item) {
+                    $('#fruitTable').append('<tr><td>' + item.rdNumber + '</td><td>' + item.rdCount + '</td><td>' + item.time + '</td></tr>');
+                });
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                console.log(textStatus, errorThrown);
+            }
+        });
+    });
+
+</script>
+</body>
+</html>
