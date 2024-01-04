@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.ruoyi.guoran.orderforgood.mapper.ReturnorderdetailsMapper">
+<mapper namespace="com.ruoyi.guoran.storeOperations.returnorderdetails.mapper.ReturnorderdetailsMapper1">
     
     <resultMap type="Returnorderdetails" id="ReturnorderdetailsResult">
         <result property="rdId"    column="rd_id"    />
@@ -19,7 +19,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updatedTime"    column="UPDATED_TIME"    />
         <result property="isStatus"    column="is_status"    />
         <result property="examine"    column="examine"    />
-
     </resultMap>
 
     <sql id="selectReturnorderdetailsVo">
@@ -28,22 +27,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
     <select id="selectReturnorderdetailsList" parameterType="Returnorderdetails" resultMap="ReturnorderdetailsResult">
         <include refid="selectReturnorderdetailsVo"/>
-        <where>
-            and is_status = 1
+        <where>  
+            <if test="sId != null  and sId != ''"> and s_id = #{sId}</if>
+            <if test="warehousingId != null "> and warehousing_id = #{warehousingId}</if>
+            <if test="rdNumber != null  and rdNumber != ''"> and rd_number = #{rdNumber}</if>
+            <if test="fruittypesId != null "> and fruitTypes_id = #{fruittypesId}</if>
+            <if test="fruitId != null  and fruitId != ''"> and fruit_id = #{fruitId}</if>
+            <if test="rdCount != null "> and rd_count = #{rdCount}</if>
+            <if test="REVISION != null "> and REVISION = #{REVISION}</if>
         </where>
     </select>
-
-
     
     <select id="selectReturnorderdetailsByRdId" parameterType="Long" resultMap="ReturnorderdetailsResult">
         <include refid="selectReturnorderdetailsVo"/>
         where rd_id = #{rdId}
     </select>
         
-    <insert id="insertReturnorderdetails" parameterType="Returnorderdetails">
+    <insert id="insertReturnorderdetails" parameterType="Returnorderdetails" useGeneratedKeys="true" keyProperty="rdId">
         insert into returnorderdetails
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="rdId != null">rd_id,</if>
             <if test="sId != null">s_id,</if>
             <if test="warehousingId != null">warehousing_id,</if>
             <if test="rdNumber != null">rd_number,</if>
@@ -59,7 +61,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
             <if test="examine != null">examine,</if>
          </trim>
         <trim prefix="values (" suffix=")" suffixOverrides=",">
-            <if test="rdId != null">#{rdId},</if>
             <if test="sId != null">#{sId},</if>
             <if test="warehousingId != null">#{warehousingId},</if>
             <if test="rdNumber != null">#{rdNumber},</if>

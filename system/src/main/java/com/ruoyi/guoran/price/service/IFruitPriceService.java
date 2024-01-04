@@ -1,7 +1,7 @@
-package com.ruoyi.price.service;
+package com.ruoyi.guoran.price.service;
 
 import java.util.List;
-import com.ruoyi.price.domain.PriceFruitPrice;
+import com.ruoyi.guoran.price.domain.PriceFruitPrice;
 
 /**
  * 设价Service接口

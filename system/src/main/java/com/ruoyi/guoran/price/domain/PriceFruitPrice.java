@@ -1,4 +1,4 @@
-package com.ruoyi.price.domain;
+package com.ruoyi.guoran.price.domain;
 
 import java.math.BigDecimal;
 import java.util.Date;
