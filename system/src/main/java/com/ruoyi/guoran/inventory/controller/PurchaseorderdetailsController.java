@@ -1,10 +1,16 @@
 package com.ruoyi.guoran.inventory.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.ruoyi.common.core.domain.entity.SysDept;
+import com.ruoyi.common.core.domain.entity.SysUser;
+import com.ruoyi.common.utils.ShiroUtils;
+import com.ruoyi.guoran.domain.Warehousestock;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -46,7 +52,37 @@ public class PurchaseorderdetailsController extends BaseController
     public TableDataInfo list(Purchaseorderdetails purchaseorderdetails)
     {
         startPage();
-        List<Purchaseorderdetails> list = purchaseorderdetailsService.selectPurchaseorderdetailsList(purchaseorderdetails);
+        List<Purchaseorderdetails> list;
+        SysUser currentUser = ShiroUtils.getSysUser();
+        String userName = currentUser.getUserName(); // 得到登录用户的用户名称
+        SysDept dept = currentUser.getDept(); // 得到登录用户的部门信息对象
+        System.out.println("--------------------------------------------------");
+        System.out.println(userName + "的部门id:" + currentUser.getDeptId());
+        System.out.println(userName + "的所属部门:" + dept.getDeptName());
+        System.out.println(userName + "的菜单列表id:" + dept.getAncestors());
+        System.out.println(userName + "的部门信息对象:" + dept);
+        System.out.println("--------------------------------------------------");
+        Subject subject = ShiroUtils.getSubject();
+        List<String> roles = new ArrayList<>();
+        roles.add("admin");
+        roles.add("manger"); // 总经理权限
+        roles.add("WarehouseManager"); // 仓库经理权限
+        boolean hasAnyRole = false;
+        for (String role : roles) {
+            if (subject.hasRole(role)) {
+                hasAnyRole = true;
+                break;
+            }
+        }
+        if (hasAnyRole) { // 如果当前用户有权限的任意一个
+            list = purchaseorderdetailsService.selectPurchaseorderdetailsList(purchaseorderdetails);
+            System.out.println("当前用户有admin角色权限");
+        } else {
+            SysDept sysDept = new SysDept(); // 部门表的对象
+            sysDept.setAncestors(dept.getAncestors());
+            list = purchaseorderdetailsService.selectPurchaseorderdetailsByWareAncestors(sysDept);
+            System.out.println(dept.getDeptName() + "下属的门店对象集合:" + list);
+        }
         return getDataTable(list);
     }
 
@@ -81,8 +117,30 @@ public class PurchaseorderdetailsController extends BaseController
     @ResponseBody
     public AjaxResult remove(Purchaseorderdetails purchaseorderdetails)
     {
-
-
-        return toAjax(purchaseorderdetailsService.auditByPId(purchaseorderdetails));
+        SysUser currentUser = ShiroUtils.getSysUser();
+        String userName = currentUser.getUserName(); // 得到登录用户的用户名称
+        SysDept dept = currentUser.getDept(); // 得到登录用户的部门信息对象
+        System.out.println("--------------------------------------------------");
+        System.out.println(userName + "的部门id:" + currentUser.getDeptId());
+        System.out.println(userName + "的所属部门:" + dept.getDeptName());
+        System.out.println("--------------------------------------------------");
+        if (purchaseorderdetails.getIsStatus() == 3) { // 如果是点击的确认送达
+            String wId = String.valueOf(currentUser.getDeptId()); // 仓库id
+            String fruitId = purchaseorderdetails.getFruitId(); // 要确认的水果id
+            Double number = purchaseorderdetails.getNumber(); // 要减少的数量
+            Warehousestock warehousestock = new Warehousestock();
+            warehousestock.setwId(wId);
+            warehousestock.setFruitId(fruitId);
+            warehousestock.setWhCount(number);
+            boolean b = purchaseorderdetailsService.reduceInventoryByWidAndFruitId(warehousestock);
+            int i = purchaseorderdetailsService.auditByPId(purchaseorderdetails);
+            if (b && i != 0) {
+                return success();
+            } else {
+                return error();
+            }
+        } else {
+            return toAjax(purchaseorderdetailsService.auditByPId(purchaseorderdetails));
+        }
     }
 }

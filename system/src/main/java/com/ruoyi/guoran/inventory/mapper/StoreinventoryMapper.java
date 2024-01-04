@@ -2,6 +2,7 @@ package com.ruoyi.guoran.inventory.mapper;
 
 import java.util.List;
 
+import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.guoran.domain.Storeinventory;
 import com.ruoyi.guoran.domain.Warehouse;
 import com.ruoyi.guoran.domain.Shop;
@@ -70,9 +71,9 @@ public interface StoreinventoryMapper
     public List<Shop> selectShopId();
 
     /**
-     * 根据登录门店的父级菜单id,去查询父级菜单的父级菜单的id
+     * 根据登录门店的菜单列表id,去查询配货仓库的部门id 和 部门名称
      */
-    public int selectParentIdByParentId(int parentId);
+    public SysDept selectWareAncestorsByShopAncestors(SysDept sysDept);
 
     /**
      * 新增门店库存

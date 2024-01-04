@@ -50,6 +50,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="isStatus"    column="is_status"    />
     </resultMap>
 
+    <!--  仓库库存表的返回Map集合  -->
     <resultMap type="Warehousestock" id="WarehousestockResult">
         <result property="whId"    column="wh_id"    />
         <result property="wId"    column="w_id"    />
@@ -64,6 +65,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <result property="updatedBy"    column="UPDATED_BY"    />
         <result property="updatedTime"    column="UPDATED_TIME"    />
         <result property="isStatus"    column="is_status"    />
+    </resultMap>
+
+    <!--  仓库库存表的返回Map集合  -->
+    <resultMap type="SysDept" id="SysDeptResult">
+        <result property="deptId"    column="dept_id"    />
+        <result property="deptName"    column="dept_name"    />
     </resultMap>
 
     <sql id="selectStoreinventoryVo">
@@ -121,13 +128,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectWareHouseId" resultMap="WarehouseResult">
         select w_number, w_name from warehouse
     </select>
+
 <!--  查询所有的门店编号  -->
     <select id="selectShopId" resultMap="ShopResult">
         select s_number, s_name from shop
     </select>
+
 <!--  根据登录门店的父级菜单id,去查询父级菜单的父级菜单的id  -->
-    <select id="selectParentIdByParentId" parameterType="int" resultType="int">
-        select parent_id from sys_dept where dept_id = #{parentId}
+    <select id="selectWareAncestorsByShopAncestors" parameterType="SysDept" resultMap="SysDeptResult">
+        select dept_id, dept_name from sys_dept WHERE ancestors = #{ancestors} and dept_name like '%仓库'
     </select>
 
     <insert id="insertStoreinventory" parameterType="Storeinventory" useGeneratedKeys="true" keyProperty="inentorydetailsId">

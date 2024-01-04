@@ -147,11 +147,13 @@
                     align: 'center',
                     formatter: function(value, row, index) {
                         var actions = [];
+                        var role = [[${@permission.hasRole('DragonWarehouseAdministrator')}]]; // 验证用户是否是仓库管理员
                         if(row.isStatus === 1) {
-                            actions.push('<a class="btn btn-primary btn-xs ' + '"  onclick="confirmAudit(' + row.pId + ',' + '2' + ')">通过审批</a> ');
-                            actions.push('<a class="btn btn-warning btn-xs ' + '" onclick="confirmAudit(' + row.pId + ',' + '0' + ')">不通过</a> ');
+                            actions.push('<a class="btn btn-primary btn-xs ' + role +  '"  onclick="confirmAudit(' + row.pId + ',\'' + row.fruitId + '\',' + row.number + ',' + '2' + ')">通过审批</a> ');
+                            actions.push('<a class="btn btn-warning btn-xs ' + role + '" onclick="confirmAudit(' + row.pId + ',\'' + row.fruitId + '\',' + row.number + ',' + '0' + ')">不通过</a> ');
                         } else if (row.isStatus === 2) {
-                            actions.push('<a class="btn btn-danger btn-xs ' + '" onclick="confirmAudit(' + row.pId + ',' + '3' + ')">确认收货</a> ');
+                            console.log(row.fruitId)
+                            actions.push('<a class="btn btn-danger btn-xs ' + role + '" onclick="confirmAudit(' + row.pId + ',\'' + row.fruitId + '\',' + row.number + ',' + '3' + ')">确认送达</a> ');
                         } else {
                             actions.push('<span style="font-size: 12px">无</span>')
                         }
@@ -209,35 +211,38 @@
 
 <script>
 <!--  审批  -->
-function confirmAudit(pId, isStatus) {
+function confirmAudit(pId, fruitId, number, isStatus) {
+    console.log(pId, fruitId, number, isStatus);
     if (isStatus === 0) {
         $.modal.confirm('确定要驳回审批吗?', function() {
             $.modal.loading("审批正在驳回，请稍后..."); // 打开遮罩层
             setTimeout(function() {
-            audit(pId, isStatus);
+            audit(pId, fruitId, number, isStatus);
             }, 1500); // 3000毫秒等于3秒
         });
     } else if (isStatus === 2) {
         $.modal.confirm('确定要通过审批吗?', function() {
             $.modal.loading("审批正在通过，请稍后..."); // 打开遮罩层
             setTimeout(function() {
-                audit(pId, isStatus);
+                audit(pId, fruitId, number, isStatus);
             }, 1500); // 3000毫秒等于3秒
         });
     } else if (isStatus === 3) {
-        $.modal.confirm('您确定已经收到货物了吗?', function() {
-            $.modal.loading("正在确认收货，请稍后..."); // 打开遮罩层
+        $.modal.confirm('您确定已经送达货物了吗?', function() {
+            $.modal.loading("正在确认送达，请稍后..."); // 打开遮罩层
             setTimeout(function() {
-                audit(pId, isStatus);
+                audit(pId, fruitId, number, isStatus);
             }, 1500); // 3000毫秒等于3秒
         });
     }
 }
-function audit(pId, isStatus) {
+function audit(pId, fruitId, number, isStatus) {
     $.ajax({
         url: "/inventory/purchaseorderdetails/audit",
         data: {
             "pId": pId,
+            "fruitId": fruitId,
+            "number": number,
             "isStatus": isStatus
         },
         dataType: "json",
@@ -245,9 +250,13 @@ function audit(pId, isStatus) {
         success: function (resp) {
             console.log("审核返回的参数:")
             console.log(resp);
-            $.modal.msgSuccess("成功反馈");
-            $.modal.closeLoading(); // 关闭遮罩层
-            $.modal.msgSuccessReload("操作成功");
+            if (resp.code === 500) {
+                $.modal.alertError(resp.msg);
+            } else {
+                $.modal.msgSuccess("成功反馈");
+                $.modal.closeLoading(); // 关闭遮罩层
+                $.modal.msgSuccessReload(resp.msg);
+            }
         },
         error:function(xhr,type,errorThrown){
             console.log('XMLHttpRequest 对象:',xhr);

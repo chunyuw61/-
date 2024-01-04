@@ -1,7 +1,10 @@
 package com.ruoyi.guoran.inventory.service;
 
 import java.util.List;
+
+import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.guoran.domain.Purchaseorderdetails;
+import com.ruoyi.guoran.domain.Warehousestock;
 
 /**
  * 门店进货单明细和仓库出货单明细Service接口
@@ -38,7 +41,18 @@ public interface IPurchaseorderdetailsService
     public String selectFruitTypeName(String code);
 
     /**
+     * 根据登录仓库的菜单列表id,去查询配货门店的部门id 和 部门名称
+     */
+    public List<Purchaseorderdetails> selectPurchaseorderdetailsByWareAncestors(SysDept sysDept);
+
+    /**
      * 审核门店订货订单
      */
     public int auditByPId(Purchaseorderdetails purchaseorderdetails);
+
+    /**
+     * 确认送达后,在仓库中减去库存
+     */
+    public boolean reduceInventoryByWidAndFruitId(Warehousestock warehousestock);
+
 }

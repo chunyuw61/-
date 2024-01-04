@@ -114,7 +114,8 @@ public class WarehousestockController extends BaseController
         Subject subject = ShiroUtils.getSubject();
         List<String> roles = new ArrayList<>();
         roles.add("admin");
-        roles.add("WarehouseManager");
+        roles.add("manger"); // 总经理权限
+        roles.add("WarehouseManager"); // 仓库经理权限
         boolean hasAnyRole = false;
         for (String role : roles) {
             if (subject.hasRole(role)) {

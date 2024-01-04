@@ -3,6 +3,7 @@ package com.ruoyi.guoran.inventory.service.impl;
 import java.util.List;
 
 import com.ruoyi.common.annotation.DataScope;
+import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.guoran.domain.Warehousestock;
 import com.ruoyi.guoran.inventory.service.IStoreinventoryService;
 import com.ruoyi.guoran.domain.Warehouse;
@@ -89,8 +90,8 @@ public class StoreinventoryServiceImpl implements IStoreinventoryService
     }
 
     @Override
-    public int selectParentIdByParentId(int parentId) {
-        return storeinventoryMapper.selectParentIdByParentId(parentId);
+    public SysDept selectWareAncestorsByShopAncestors(SysDept sysDept) {
+        return storeinventoryMapper.selectWareAncestorsByShopAncestors(sysDept);
     }
 
     /**

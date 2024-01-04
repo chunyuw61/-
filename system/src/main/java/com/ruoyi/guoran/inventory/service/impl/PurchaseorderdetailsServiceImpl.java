@@ -2,6 +2,8 @@ package com.ruoyi.guoran.inventory.service.impl;
 
 import java.util.List;
 
+import com.ruoyi.common.core.domain.entity.SysDept;
+import com.ruoyi.guoran.domain.Warehousestock;
 import com.ruoyi.guoran.inventory.service.IPurchaseorderdetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,6 +56,11 @@ public class PurchaseorderdetailsServiceImpl implements IPurchaseorderdetailsSer
         return purchaseorderdetailsMapper.selectFruitTypeName(code);
     }
 
+    @Override
+    public List<Purchaseorderdetails> selectPurchaseorderdetailsByWareAncestors(SysDept sysDept) {
+        return purchaseorderdetailsMapper.selectPurchaseorderdetailsByWareAncestors(sysDept);
+    }
+
 
     /**
      *  审核门店订货订单
@@ -62,5 +69,10 @@ public class PurchaseorderdetailsServiceImpl implements IPurchaseorderdetailsSer
     public int auditByPId(Purchaseorderdetails purchaseorderdetails)
     {
         return purchaseorderdetailsMapper.auditByPId(purchaseorderdetails);
+    }
+
+    @Override
+    public boolean reduceInventoryByWidAndFruitId(Warehousestock warehousestock) {
+        return purchaseorderdetailsMapper.reduceInventoryByWidAndFruitId(warehousestock);
     }
 }
