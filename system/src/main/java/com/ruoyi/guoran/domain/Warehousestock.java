@@ -1,16 +1,13 @@
 package com.ruoyi.guoran.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.ruoyi.common.annotation.Excel;
-import com.ruoyi.common.core.domain.BaseEntity;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
 import java.math.BigDecimal;
 import java.util.Date;
 
+import com.ruoyi.common.annotation.Excel;
+import com.ruoyi.common.core.domain.BaseEntity;
+
 /**
- * 出货单对象 warehousestock
+ * 订货对象 warehousestock
  * 
  * @author 24K纯帅
  * @date 2023-12-26
@@ -20,7 +17,6 @@ public class Warehousestock extends BaseEntity
     private static final long serialVersionUID = 1L;
 
     /** 主键 */
-    @Excel(name = "主键")
     private Long whId;
 
     /** 仓库编号 */
@@ -33,7 +29,7 @@ public class Warehousestock extends BaseEntity
 
     /** 水果种类编号 */
     @Excel(name = "水果种类编号")
-    private String fruittypesId;
+    private Long fruittypesId;
 
     /** 水果名称 */
     @Excel(name = "水果名称")
@@ -51,28 +47,39 @@ public class Warehousestock extends BaseEntity
     private Long REVISION;
 
     /** 创建人 */
-    @Excel(name = "创建人")
     private String createdBy;
 
     /** 创建时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "创建时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date createdTime;
 
     /** 更新人 */
-    @Excel(name = "更新人")
     private String updatedBy;
 
     /** 更新时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "更新时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date updatedTime;
 
-    /** 状态 */
-    @Excel(name = "状态")
+    /**  */
     private Long isStatus;
 
-    public void setWhId(Long whId) 
+    private String code;
+
+    private String img;
+
+
+//    public Warehousestock(Long whId, String wId, String img, String fruitId, Long fruittypesId, String name, BigDecimal jinjia, Double whCount) {
+//        this.whId = whId;
+//        this.wId = wId;
+//        this.img = img;
+//        this.fruitId = fruitId;
+//        this.fruittypesId = fruittypesId;
+//        this.fruitName = name;
+//        this.jinjia = jinjia;
+//        this.whCount = whCount;
+//    }
+
+
+
+    public void setWhId(Long whId)
     {
         this.whId = whId;
     }
@@ -81,39 +88,37 @@ public class Warehousestock extends BaseEntity
     {
         return whId;
     }
-    public void setwId(String wId)
-    {
+
+    public String getwId() {
+        return wId;
+    }
+
+    public void setwId(String wId) {
         this.wId = wId;
     }
 
-    public String getwId()
-    {
-        return wId;
+    public String getFruitId() {
+        return fruitId;
     }
-    public void setFruitId(String fruitId)
-    {
+
+    public void setFruitId(String fruitId) {
         this.fruitId = fruitId;
     }
 
-    public String getFruitId()
-    {
-        return fruitId;
+    public Long getFruittypesId() {
+        return fruittypesId;
     }
-    public void setFruittypesId(String fruittypesId) 
-    {
+
+    public void setFruittypesId(Long fruittypesId) {
         this.fruittypesId = fruittypesId;
     }
 
-    public String getFruittypesId() 
+    public void setFruitName(String name)
     {
-        return fruittypesId;
-    }
-    public void setFruitName(String fruitName) 
-    {
-        this.fruitName = fruitName;
+        this.fruitName = name;
     }
 
-    public String getFruitName() 
+    public String getFruitName()
     {
         return fruitName;
     }
@@ -190,22 +195,40 @@ public class Warehousestock extends BaseEntity
         return isStatus;
     }
 
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
+    }
+
     @Override
     public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("whId", getWhId())
-            .append("wId", getwId())
-            .append("fruitId", getFruitId())
-            .append("fruittypesId", getFruittypesId())
-            .append("fruitName", getFruitName())
-            .append("jinjia", getJinjia())
-            .append("whCount", getWhCount())
-            .append("REVISION", getREVISION())
-            .append("createdBy", getCreatedBy())
-            .append("createdTime", getCreatedTime())
-            .append("updatedBy", getUpdatedBy())
-            .append("updatedTime", getUpdatedTime())
-            .append("isStatus", getIsStatus())
-            .toString();
+        return "Warehousestock{" +
+                "whId=" + whId +
+                ", wId='" + wId + '\'' +
+                ", fruitId='" + fruitId + '\'' +
+                ", fruittypesId=" + fruittypesId +
+                ", fruitName='" + fruitName + '\'' +
+                ", jinjia=" + jinjia +
+                ", whCount=" + whCount +
+                ", REVISION=" + REVISION +
+                ", createdBy='" + createdBy + '\'' +
+                ", createdTime=" + createdTime +
+                ", updatedBy='" + updatedBy + '\'' +
+                ", updatedTime=" + updatedTime +
+                ", isStatus=" + isStatus +
+                ", code='" + code + '\'' +
+                ", img='" + img + '\'' +
+                '}';
     }
 }

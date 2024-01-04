@@ -1,12 +1,12 @@
-package com.ruoyi.price.service.impl;
+package com.ruoyi.guoran.price.service.impl;
 
 import java.util.List;
 
-import com.ruoyi.price.domain.PriceFruitPrice;
+import com.ruoyi.guoran.price.domain.PriceFruitPrice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.ruoyi.price.mapper.PriceFruitPriceMapper;
-import com.ruoyi.price.service.IFruitPriceService;
+import com.ruoyi.guoran.price.mapper.PriceFruitPriceMapper;
+import com.ruoyi.guoran.price.service.IFruitPriceService;
 import com.ruoyi.common.core.text.Convert;
 
 /**

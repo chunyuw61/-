@@ -1,7 +1,7 @@
-package com.ruoyi.price.mapper;
+package com.ruoyi.guoran.price.mapper;
 
 import java.util.List;
-import com.ruoyi.price.domain.PriceFruitPrice;
+import com.ruoyi.guoran.price.domain.PriceFruitPrice;
 
 /**
  * 设价Mapper接口

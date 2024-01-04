@@ -23,7 +23,7 @@ import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.file.FileUploadUtils;
 import com.ruoyi.common.utils.file.MimeTypeUtils;
 import com.ruoyi.framework.shiro.service.SysPasswordService;
-import com.ruoyi.system.service.ISysUserService;
+import com.ruoyi.warehousing.service.ISysUserService;
 
 /**
  * 个人信息 业务处理

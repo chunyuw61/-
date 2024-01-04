@@ -101,7 +101,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </delete>
 
     <delete id="deleteReturnorderdetailsByRdIds" parameterType="String">
-        delete from returnorderdetails where rd_id in 
+        delete from returnorderdetails where rd_id in
         <foreach item="rdId" collection="array" open="(" separator="," close=")">
             #{rdId}
         </foreach>

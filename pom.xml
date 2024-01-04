@@ -183,6 +183,12 @@
                 <version>${ruoyi.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>com.ruoyi.storeOperations</groupId>
+                <artifactId>storeOperations</artifactId>
+                <version>${ruoyi.version}</version>
+            </dependency>
+
             <!-- 价格管理 -->
             <dependency>
                 <groupId>com.ruoyi</groupId>
@@ -214,6 +220,7 @@
         <module>ruoyi-quartz</module>
         <module>ruoyi-generator</module>
         <module>ruoyi-common</module>
+        <module>storeOperations</module>
         <module>price</module>
         <module>department</module>
         <module>system</module>

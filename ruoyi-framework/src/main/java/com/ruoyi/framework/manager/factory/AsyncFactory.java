@@ -11,12 +11,12 @@ import com.ruoyi.common.utils.ShiroUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.spring.SpringUtils;
 import com.ruoyi.framework.shiro.session.OnlineSession;
-import com.ruoyi.system.domain.SysLogininfor;
-import com.ruoyi.system.domain.SysOperLog;
-import com.ruoyi.system.domain.SysUserOnline;
-import com.ruoyi.system.service.ISysOperLogService;
-import com.ruoyi.system.service.ISysUserOnlineService;
-import com.ruoyi.system.service.impl.SysLogininforServiceImpl;
+import com.ruoyi.warehousing.domain.SysLogininfor;
+import com.ruoyi.warehousing.domain.SysOperLog;
+import com.ruoyi.warehousing.domain.SysUserOnline;
+import com.ruoyi.warehousing.service.ISysOperLogService;
+import com.ruoyi.warehousing.service.ISysUserOnlineService;
+import com.ruoyi.warehousing.service.impl.SysLogininforServiceImpl;
 import eu.bitwalker.useragentutils.UserAgent;
 
 /**

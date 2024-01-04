@@ -1,9 +1,9 @@
 package com.ruoyi.guoran.orderforgood.controller;
 
+import com.ruoyi.guoran.domain.Returnorderdetails;
 import com.ruoyi.guoran.orderforgood.service.impl.ReturnParticularsServiceImpl;
 import com.ruoyi.guoran.domain.ReturnParticulars;
 import com.ruoyi.guoran.domain.ReturnStatistics;
-import com.ruoyi.guoran.domain.Returnorderdetails;
 import com.ruoyi.guoran.domain.Storeinventory;
 import com.ruoyi.guoran.orderforgood.service.impl.ReturnStatisticsServiceImpl;
 import com.ruoyi.guoran.orderforgood.service.impl.ReturnorderdetailsServiceImpl;
@@ -50,7 +50,7 @@ public class ExamineController {
             //退货统计
             ReturnStatistics returnStatistics = new ReturnStatistics();
             //退货: 门店 水果编号 重量 最后更新时间
-            returnStatistics.setsId(returnorderdetails2.getSId());
+            returnStatistics.setsId(returnorderdetails2.getsId());
             returnStatistics.setFruitId(returnorderdetails2.getFruitId());
             List<ReturnStatistics> lr = rs.selectReturnStatisticsList(returnStatistics);
             if (!lr.isEmpty()) {
@@ -80,7 +80,7 @@ public class ExamineController {
             returnParticulars.setRdNumber(returnorderdetails2.getRdNumber());
             returnParticulars.setTime(time);
             returnParticulars.setJudge(0);
-            returnParticulars.setSId(returnorderdetails2.getSId());
+            returnParticulars.setSId(returnorderdetails2.getsId());
             returnParticulars.setFruitId(returnorderdetails2.getFruitId());
             returnParticulars.setRdCount(returnorderdetails2.getRdCount());
             int i2 = rp.insertReturnParticulars(returnParticulars);
@@ -110,7 +110,7 @@ public class ExamineController {
             returnParticulars.setRdNumber(returnorderdetails2.getRdNumber());
             returnParticulars.setTime(time);
             returnParticulars.setJudge(1);
-            returnParticulars.setSId(returnorderdetails2.getSId());
+            returnParticulars.setSId(returnorderdetails2.getsId());
             returnParticulars.setFruitId(returnorderdetails2.getFruitId());
             returnParticulars.setRdCount(returnorderdetails2.getRdCount());
             int i2 = rp.insertReturnParticulars(returnParticulars);

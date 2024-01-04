@@ -23,8 +23,8 @@ import com.ruoyi.common.utils.DateUtils;
 import com.ruoyi.common.utils.ServletUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.shiro.service.SysPasswordService;
-import com.ruoyi.system.service.ISysConfigService;
-import com.ruoyi.system.service.ISysMenuService;
+import com.ruoyi.warehousing.service.ISysConfigService;
+import com.ruoyi.warehousing.service.ISysMenuService;
 
 /**
  * 首页 业务处理
