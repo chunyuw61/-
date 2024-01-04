@@ -154,5 +154,23 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         	#{deptId}
         </foreach>
 	</update>
+	<select id="selectID">
+		select dept_id
+		from sys_dept
+		where parent_id = #{param1}
+		  and dept_name = #{param2}
+		  and ancestors = #{param3};
+
+	</select>
+	<insert id="insertshop">
+
+		insert into shop(s_number,s_name)
+		values( #{param1},#{param2})
+	</insert>
+
+	<insert id="insertCK">
+		insert into warehouse (w_number, w_name) values (#{param1},#{param2});
+
+	</insert>
 
 </mapper> 

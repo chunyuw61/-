@@ -114,4 +114,10 @@ public interface ISysDeptService
      * @param deptId 部门id
      */
     public void checkDeptDataScope(Long deptId);
+
+    Integer selectID(Long parentId, String deptName, String ancestors);
+
+    Integer insertshop(String snumber, String sname);
+
+    Integer insertCK(String wnumber,String wname);
 }

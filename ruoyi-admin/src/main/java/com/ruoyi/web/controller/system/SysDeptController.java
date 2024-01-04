@@ -48,6 +48,7 @@ public class SysDeptController extends BaseController
     public List<SysDept> list(SysDept dept)
     {
         List<SysDept> deptList = deptService.selectDeptList(dept);
+
         return deptList;
     }
 
@@ -74,12 +75,33 @@ public class SysDeptController extends BaseController
     @ResponseBody
     public AjaxResult addSave(@Validated SysDept dept)
     {
+
         if (!deptService.checkDeptNameUnique(dept))
         {
             return error("新增部门'" + dept.getDeptName() + "'失败，部门名称已存在");
+         }
+        int i = deptService.insertDept(dept);
+        Long deptId = dept.getDeptId();
+        System.out.println(deptId);
+        Long parentId = dept.getParentId();
+        String deptName = dept.getDeptName();
+        String ancestors = dept.getAncestors();
+        Integer sunmber = deptService.selectID(parentId, deptName, ancestors);
+        System.out.println(sunmber);
+        if (parentId == 200) {
+            deptService.insertshop(String.valueOf(sunmber),deptName);
         }
+        if (parentId == 201) {
+            deptService.insertCK(String.valueOf(sunmber), deptName);
+        }
+
+
+
+        System.out.println(i);
+
+
         dept.setCreateBy(getLoginName());
-        return toAjax(deptService.insertDept(dept));
+        return toAjax(i);
     }
 
     /**
