@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('报损信息列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+<!--            <div class="col-sm-12 search-collapse">-->
+<!--                <form id="formId">-->
+<!--                    <div class="select-list">-->
+<!--                        <ul>-->
+<!--                            <li>-->
+<!--                                <label>门店编号：</label>-->
+<!--                                <input type="text" name="sId"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <label>订单编号：</label>-->
+<!--                                <input type="text" name="oId"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <label>日期：</label>-->
+<!--                                <input type="text" class="time-input" placeholder="请选择日期" name="datetime"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <label>水果编号：</label>-->
+<!--                                <input type="text" name="fruitsId"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <label>数量：</label>-->
+<!--                                <input type="text" name="number"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <label>单价：</label>-->
+<!--                                <input type="text" name="unitPrice"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <label>单品总价：</label>-->
+<!--                                <input type="text" name="totalPrice"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <label>报损原因：</label>-->
+<!--                                <input type="text" name="cause"/>-->
+<!--                            </li>-->
+<!--&lt;!&ndash;                            <li>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <label>乐观锁：</label>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <input type="text" name="REVISION"/>&ndash;&gt;-->
+<!--&lt;!&ndash;                            </li>&ndash;&gt;-->
+<!--&lt;!&ndash;                            <li>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <label>创建人：</label>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <input type="text" name="createdBy"/>&ndash;&gt;-->
+<!--&lt;!&ndash;                            </li>&ndash;&gt;-->
+<!--&lt;!&ndash;                            <li>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <label>创建时间：</label>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <input type="text" class="time-input" placeholder="请选择创建时间" name="createdTime"/>&ndash;&gt;-->
+<!--&lt;!&ndash;                            </li>&ndash;&gt;-->
+<!--&lt;!&ndash;                            <li>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <label>更新人：</label>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <input type="text" name="updatedBy"/>&ndash;&gt;-->
+<!--&lt;!&ndash;                            </li>&ndash;&gt;-->
+<!--&lt;!&ndash;                            <li>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <label>更新时间：</label>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <input type="text" class="time-input" placeholder="请选择更新时间" name="updatedTime"/>&ndash;&gt;-->
+<!--&lt;!&ndash;                            </li>&ndash;&gt;-->
+<!--&lt;!&ndash;                            <li>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>&ndash;&gt;-->
+<!--&lt;!&ndash;                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>&ndash;&gt;-->
+<!--&lt;!&ndash;                            </li>&ndash;&gt;-->
+<!--                        </ul>-->
+<!--                    </div>-->
+<!--                </form>-->
+<!--            </div>-->
+
+<!--            <div class="btn-group-sm" id="toolbar" role="group">-->
+<!--                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="reportinglosses:reportinglosses:add">-->
+<!--                    <i class="fa fa-plus"></i> 添加-->
+<!--                </a>-->
+<!--                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="reportinglosses:reportinglosses:edit">-->
+<!--                    <i class="fa fa-edit"></i> 修改-->
+<!--                </a>-->
+<!--                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="reportinglosses:reportinglosses:remove">-->
+<!--                    <i class="fa fa-remove"></i> 删除-->
+<!--                </a>-->
+<!--                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="reportinglosses:reportinglosses:export">-->
+<!--                    <i class="fa fa-download"></i> 导出-->
+<!--                </a>-->
+<!--            </div>-->
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('reportinglosses:reportinglosses:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('reportinglosses:reportinglosses:remove')}]];
+        var prefix = ctx + "reportinglosses/reportinglosses";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                showSearch: false,
+                showToggle: false,
+                showColumns: false,
+                modalName: "报损信息",
+                columns: [{
+                    checkbox: false
+                },
+                {
+                    field: 'rId',
+                    title: '主键',
+                    visible: false
+                },
+                {
+                    field: 'sId',
+                    title: '门店编号'
+                },
+                {
+                    field: 'oId',
+                    title: '订单编号'
+                },
+                {
+                    field: 'datetime',
+                    title: '日期'
+                },
+                {
+                    field: 'fruits.name',
+                    title: '水果名称'
+                },
+                {
+                    field: 'number',
+                    title: '数量'
+                },
+                {
+                    field: 'unitPrice',
+                    title: '单价'
+                },
+                {
+                    field: 'totalPrice',
+                    title: '单品总价'
+                },
+                {
+                    field: 'cause',
+                    title: '报损原因'
+                },
+                {
+                    field: 'isStatus',
+                    title: '状态',
+                    visible: false
+                },
+                {
+                    field: 'REVISION',
+                    title: '乐观锁',
+                    visible: false
+                },
+                {
+                    field: 'createdBy',
+                    title: '创建人',
+                    visible: false
+                },
+                {
+                    field: 'createdTime',
+                    title: '创建时间',
+                    visible: false
+                },
+                {
+                    field: 'updatedBy',
+                    title: '更新人',
+                    visible: false
+                },
+                {
+                    field: 'updatedTime',
+                    title: '更新时间',
+                    visible: false
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    visible: false,
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.rId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.rId + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+    </script>
+</body>
+</html>

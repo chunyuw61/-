@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('销售统计列表')" />
+
+    <script src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.2.1/jquery.min.js"></script>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+<!--                            <li>-->
+<!--                                <label>订单表id：</label>-->
+<!--                                <input type="text" name="oId"/>-->
+<!--                            </li>-->
+                            <li>
+                                <label>门店编号：</label>
+                                <input type="text" name="sId"/>
+                            </li>
+                            <li>
+                                <label>日期：</label>
+                                <input type="text" class="time-input" placeholder="请选择日期" name="date"/>
+                            </li>
+<!--                            <li>-->
+<!--                                <label>营业额：</label>-->
+<!--                                <input type="text" name="turnover"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <label>客流量：</label>-->
+<!--                                <input type="text" name="passengerFlow"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <label>平均销售额：</label>-->
+<!--                                <input type="text" name="avgSales"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <label>乐观锁：</label>-->
+<!--                                <input type="text" name="revision"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <label>创建人：</label>-->
+<!--                                <input type="text" name="createdBy"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <label>创建时间：</label>-->
+<!--                                <input type="text" class="time-input" placeholder="请选择创建时间" name="createdTime"/>-->
+<!--                            </li>-->
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search() "><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+<!--                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="statistics:statistics:add">-->
+<!--                    <i class="fa fa-plus"></i> 添加-->
+<!--                </a>-->
+<!--                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="statistics:statistics:edit">-->
+<!--                    <i class="fa fa-edit"></i> 修改-->
+<!--                </a>-->
+<!--                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="statistics:statistics:remove">-->
+<!--                    <i class="fa fa-remove"></i> 删除-->
+<!--                </a>-->
+<!--                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="statistics:statistics:export">-->
+<!--                    <i class="fa fa-download"></i> 导出-->
+<!--                </a>-->
+                <a class="btn btn-success" onclick="test()">
+                    <i class="fa fa-download"></i>查看各店面总销售额排行
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+
+     <div class="container">
+         <!-- Modal -->
+         <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+             <div class="modal-dialog" role="document">
+                 <div class="modal-content">
+                     <div class="modal-header">
+                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                         <h4 class="modal-title" id="myModalLabel">单日销售详情</h4>
+                     </div>
+                     <div class="modal-body">
+                         <table class="table table-bordered table-striped">
+                             <thead>
+                                 <th>订单编号</th>
+                                 <th>水果名称</th>
+                                 <th>数量</th>
+                                 <th>单价</th>
+                                 <th>总价</th>
+                             </thead>
+                             <tbody id="tb">
+                             </tbody>
+                             <tfoot id="qw">
+                             </tfoot>
+                         </table>
+                     </div>
+                     <div class="modal-footer">
+                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                     </div>
+                 </div>
+             </div>
+         </div>
+     </div>
+
+
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('statistics:statistics:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('statistics:statistics:remove')}]];
+        var prefix = ctx + "statistics/statistics";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                showSearch: false,
+                showRefresh: false,
+                showToggle: false,
+                showColumns: false,
+                modalName: "销售统计",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'salesStatisticId',
+                    title: '主键',
+                    visible: false
+                },
+                {
+                    field: 'oId',
+                    title: '订单表id',
+                    visible: false
+                },
+                {
+                    field: 'sId',
+                    title: '门店编号'
+                },
+                {
+                    field: 'date',
+                    title: '日期'
+                },
+                {
+                    field: 'turnover',
+                    title: '营业额'
+                },
+                {
+                    field: 'passengerFlow',
+                    title: '客流量'
+                },
+                {
+                    field: 'avgSales',
+                    title: '平均销售额'
+                },
+                {
+                    field: 'revision',
+                    title: '乐观锁',
+                    visible: false
+                },
+                {
+                    field: 'isStatus',
+                    title: '是否被删除',
+                    visible: false
+                },
+                {
+                    field: 'createdBy',
+                    title: '创建人',
+                    visible: false
+                },
+                {
+                    field: 'createdTime',
+                    title: '创建时间',
+                    visible: false
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        // actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.salesStatisticId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        // actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.salesStatisticId + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        actions.push('<a class="btn btn-info btn-xs '+'data-toggle="modal"'+ 'data-target="#myModal"' +   '" href="javascript:void(0)" onclick="get(\'' + row.sId+ '\',\'' + row.date +'\')"><i class="fa fa-list"></i>详情</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+
+        // 获取当前门店、当日 销售明细数据
+        function get( sid , date ) {
+            $.ajax({
+                url:'/statistics/statistics/test',
+                type:'post',
+                data:{sid:sid, date:date},
+                success:function (data) {
+                    // console.log(data)
+                    $("#tb").empty()
+                    for (let i = 0; i < data.length; i++) {
+                        let fruit = data[i];
+                        $("<tr></tr>")
+                            .append("<td>"+fruit.fruitNum+"</td>")
+                            .append("<td>"+fruit.fruitName+"</td>")
+                            .append("<td>"+fruit.fruitCount+"</td>")
+                            .append("<td>"+fruit.unitPrice+"</td>")
+                            .append("<td>"+fruit.allMoney+"</td>")
+                            .appendTo($("#tb"));
+                    }
+                }
+            })
+            $("#myModal").modal('show');
+        }
+
+        // 店铺大致情况
+        function test() {
+            $.modal.open('各门店销售情况汇总',  "total/total/total")
+        }
+
+    </script>
+</body>
+</html>

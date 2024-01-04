@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.total.mapper.AllTotalMapper">
+    
+    <resultMap type="AllTotal" id="AllTotalResult">
+        <result property="id"    column="id"    />
+        <result property="sId"    column="s_id"    />
+        <result property="total"    column="total"    />
+    </resultMap>
+
+    <sql id="selectAllTotalVo">
+        select id, s_id, total from all_total
+    </sql>
+
+    <select id="countAll" >
+        select sales_statistic_id as id ,s_id as sId,sum(turnover) as total from sales_statistics group by s_id order by total desc
+    </select>
+
+    <select id="selectAllTotalList" parameterType="AllTotal" resultMap="AllTotalResult">
+        <include refid="selectAllTotalVo"/>
+        <where>  
+            <if test="sId != null  and sId != ''"> and s_id = #{sId}</if>
+            <if test="total != null "> and total = #{total}</if>
+        </where>
+    </select>
+    
+    <select id="selectAllTotalById" parameterType="Long" resultMap="AllTotalResult">
+        <include refid="selectAllTotalVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertAllTotal" parameterType="AllTotal">
+        insert into all_total
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null">id,</if>
+            <if test="sId != null">s_id,</if>
+            <if test="total != null">total,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null">#{id},</if>
+            <if test="sId != null">#{sId},</if>
+            <if test="total != null">#{total},</if>
+         </trim>
+    </insert>
+
+    <update id="updateAllTotal" parameterType="AllTotal">
+        update all_total
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sId != null">s_id = #{sId},</if>
+            <if test="total != null">total = #{total},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteAllTotalById" parameterType="Long">
+        delete from all_total where id = #{id}
+    </delete>
+
+    <delete id="deleteAllTotalByIds" parameterType="String">
+        delete from all_total where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+</mapper>
