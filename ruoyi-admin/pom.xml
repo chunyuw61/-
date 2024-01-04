@@ -69,13 +69,8 @@
 
         <dependency>
             <groupId>com.ruoyi</groupId>
-            <artifactId>inventory</artifactId>
+            <artifactId>guoran</artifactId>
             <version>1.0</version>
-        </dependency>
-
-        <dependency>
-            <groupId>com.ruoyi</groupId>
-            <artifactId>order</artifactId>
         </dependency>
 
     </dependencies>
