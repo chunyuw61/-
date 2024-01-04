@@ -70,7 +70,7 @@
                         for (let i = 0; i < resp.wareHouse.length; i++) {
                             let wareHouse = resp.wareHouse[i];
                             console.log("仓库名称" + (i+1) + ":"  + wareHouse.wName);
-                            wareHouseObj[wareHouse.wName] = wareHouse.wNumber; // warehouse.wName作为键，warehouse.wNumber作为值存入对象中
+                            wareHouseObj[wareHouse.wName] = wareHouse.wNumber; // warehouseWarehouse.wName作为键，warehouseWarehouse.wNumber作为值存入对象中
                             $("<option></option>").html(wareHouse.wName).appendTo("#deliveryWarehouseName");
                         }
                         console.log("所有的仓库:");

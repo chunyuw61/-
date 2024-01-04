@@ -1,5 +1,6 @@
-package com.ruoyi.guoran.domain;
+package com.ruoyi.price.domain;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -8,33 +9,39 @@ import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
 /**
- * 仓库信息对象 warehouse
+ * 设价对象 fruit_price
  * 
  * @author ruoyi
- * @date 2023-12-27
+ * @date 2023-12-25
  */
-public class Warehouse extends BaseEntity
+public class PriceFruitPrice extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
-    /** 主键id */
-    private Long wId;
+    /** 主键 */
+    private Long pId;
 
-    /** 仓库编号 */
-    @Excel(name = "仓库编号")
-    private String wNumber;
 
-    /** 仓库名称 */
-    @Excel(name = "仓库名称")
-    private String wName;
 
-    /** 仓库地址 */
-    @Excel(name = "仓库地址")
-    private String wAddress;
+    /** 水果编号 */
+    @Excel(name = "水果编号")
+    private String code;
 
-    /** 联系电话 员工表的外键 */
-    @Excel(name = "联系电话 员工表的外键")
-    private String phone;
+    /** 水果名称 */
+    @Excel(name = "水果名称")
+    private String name;
+
+    /** 最大金额 */
+    @Excel(name = "最大金额")
+    private BigDecimal maxprice;
+
+    /** 零售价 */
+    @Excel(name = "零售价")
+    private BigDecimal price;
+
+    /** 折扣 */
+    @Excel(name = "折扣")
+    private BigDecimal zhekou;
 
     /** 乐观锁 */
     private Long REVISION;
@@ -51,53 +58,62 @@ public class Warehouse extends BaseEntity
     /** 更新时间 */
     private Date updatedTime;
 
-    /**  */
-    private Long isStatus;
-
-    public void setwId(Long wId) 
+    public void setpId(Long pId) 
     {
-        this.wId = wId;
+        this.pId = pId;
     }
 
-    public Long getwId() 
+    public Long getpId() 
     {
-        return wId;
-    }
-    public void setwNumber(String wNumber) 
-    {
-        this.wNumber = wNumber;
+        return pId;
     }
 
-    public String getwNumber() 
+    public void setCode(String code)
     {
-        return wNumber;
-    }
-    public void setwName(String wName) 
-    {
-        this.wName = wName;
+        this.code = code;
+
     }
 
-    public String getwName() 
+    public String getCode()
     {
-        return wName;
+        return code;
     }
-    public void setwAddress(String wAddress) 
+    public void setName(String name)
     {
-        this.wAddress = wAddress;
+        this.name = name;
+
     }
 
-    public String getwAddress() 
+    public String getName()
     {
-        return wAddress;
+        return name;
     }
-    public void setPhone(String phone) 
+    public void setMaxprice(BigDecimal maxprice) 
     {
-        this.phone = phone;
+        this.maxprice = maxprice;
     }
 
-    public String getPhone() 
+    public BigDecimal getMaxprice() 
     {
-        return phone;
+        return maxprice;
+    }
+    public void setPrice(BigDecimal price) 
+    {
+        this.price = price;
+    }
+
+    public BigDecimal getPrice() 
+    {
+        return price;
+    }
+    public void setZhekou(BigDecimal zhekou) 
+    {
+        this.zhekou = zhekou;
+    }
+
+    public BigDecimal getZhekou() 
+    {
+        return zhekou;
     }
     public void setREVISION(Long REVISION) 
     {
@@ -144,30 +160,21 @@ public class Warehouse extends BaseEntity
     {
         return updatedTime;
     }
-    public void setIsStatus(Long isStatus) 
-    {
-        this.isStatus = isStatus;
-    }
-
-    public Long getIsStatus() 
-    {
-        return isStatus;
-    }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("wId", getwId())
-            .append("wNumber", getwNumber())
-            .append("wName", getwName())
-            .append("wAddress", getwAddress())
-            .append("phone", getPhone())
+            .append("pId", getpId())
+            .append("code", getCode())
+            .append("name", getName())
+            .append("maxprice", getMaxprice())
+            .append("price", getPrice())
+            .append("zhekou", getZhekou())
             .append("REVISION", getREVISION())
             .append("createdBy", getCreatedBy())
             .append("createdTime", getCreatedTime())
             .append("updatedBy", getUpdatedBy())
             .append("updatedTime", getUpdatedTime())
-            .append("isStatus", getIsStatus())
             .toString();
     }
 }

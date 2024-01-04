@@ -1,7 +1,7 @@
 package com.ruoyi.guoran.orderforgood.controller;
 
-import com.ruoyi.guoran.orderforgood.service.impl.ShopServiceImpl;
 import com.ruoyi.guoran.domain.Shop;
+import com.ruoyi.guoran.orderforgood.service.impl.ShopServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

@@ -2,9 +2,9 @@ package com.ruoyi.guoran.inventory.service;
 
 import java.util.List;
 
+import com.ruoyi.guoran.domain.Shop;
 import com.ruoyi.guoran.domain.Storeinventory;
 import com.ruoyi.guoran.domain.Warehouse;
-import com.ruoyi.guoran.domain.Shop;
 import com.ruoyi.guoran.domain.Warehousestock;
 
 /**

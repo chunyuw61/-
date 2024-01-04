@@ -3,10 +3,10 @@ package com.ruoyi.guoran.inventory.service.impl;
 import java.util.List;
 
 import com.ruoyi.common.annotation.DataScope;
+import com.ruoyi.guoran.domain.Shop;
 import com.ruoyi.guoran.domain.Warehousestock;
 import com.ruoyi.guoran.inventory.service.IStoreinventoryService;
 import com.ruoyi.guoran.domain.Warehouse;
-import com.ruoyi.guoran.domain.Shop;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.guoran.inventory.mapper.StoreinventoryMapper;
