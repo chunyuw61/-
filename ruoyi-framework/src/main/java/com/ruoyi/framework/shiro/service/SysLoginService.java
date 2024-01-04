@@ -24,9 +24,9 @@ import com.ruoyi.common.utils.ShiroUtils;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.manager.AsyncManager;
 import com.ruoyi.framework.manager.factory.AsyncFactory;
-import com.ruoyi.system.service.ISysConfigService;
-import com.ruoyi.system.service.ISysMenuService;
-import com.ruoyi.system.service.ISysUserService;
+import com.ruoyi.warehousing.service.ISysConfigService;
+import com.ruoyi.warehousing.service.ISysMenuService;
+import com.ruoyi.warehousing.service.ISysUserService;
 
 /**
  * 登录校验方法

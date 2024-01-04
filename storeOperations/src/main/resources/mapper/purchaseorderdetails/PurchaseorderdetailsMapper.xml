@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.storeOperations.purchaseorderdetails.mapper.PurchaseorderdetailsMapper">
+    
+    <resultMap type="Purchaseorderdetails" id="PurchaseorderdetailsResult">
+        <result property="pId"    column="P_id"    />
+        <result property="sId"    column="s_id"    />
+        <result property="pNumber"    column="p_number"    />
+        <result property="fruittypesId"    column="fruitTypes_id"    />
+        <result property="fruitId"    column="fruit_id"    />
+        <result property="fruitName"    column="fruit_name"    />
+        <result property="number"    column="number"    />
+        <result property="price"    column="price"    />
+        <result property="REVISION"    column="REVISION"    />
+        <result property="createdBy"    column="CREATED_BY"    />
+        <result property="createdTime"    column="CREATED_TIME"    />
+        <result property="updatedBy"    column="UPDATED_BY"    />
+        <result property="updatedTime"    column="UPDATED_TIME"    />
+        <result property="isStatus"    column="is_status"    />
+    </resultMap>
+
+    <sql id="selectPurchaseorderdetailsVo">
+        select P_id, s_id, p_number, fruitTypes_id, fruit_id, fruit_name, number, price, REVISION, CREATED_BY, CREATED_TIME, UPDATED_BY, UPDATED_TIME, is_status from purchaseorderdetails
+    </sql>
+
+    <select id="selectPurchaseorderdetailsList" parameterType="Purchaseorderdetails" resultMap="PurchaseorderdetailsResult">
+        select a.P_id, a.s_id, a.p_number, a.fruitTypes_id, a.fruit_id, a.fruit_name, a.number, a.price,b.s_number,a.is_status from  purchaseorderdetails a left join shop b on a.s_id = b.s_number
+        <where>  
+            <if test="sId != null and sId != '' "> and s_id = #{sId}</if>
+            <if test="pNumber != null and pNumber !='' "> and p_number = #{pNumber}</if>
+            <if test="fruittypesId != null and fruittypesId !='' "> and fruitTypes_id like concat('%', #{fruittypesId}, '%')</if>
+            <if test="fruitId != null  and fruitId != '' "> and fruit_id = #{fruitId}</if>
+            <if test="fruitName != null  and fruitName != ''"> and fruit_name like concat('%', #{fruitName}, '%')</if>
+            <if test="number != null "> and number = #{number}</if>
+            <if test="price != null "> and price = #{price}</if>
+        </where>
+    </select>
+    
+    <select id="selectPurchaseorderdetailsByPId" parameterType="Long" resultMap="PurchaseorderdetailsResult">
+        <include refid="selectPurchaseorderdetailsVo"/>
+        where P_id = #{pId}
+    </select>
+
+    <select id="selectPurchaseorderdetailsBypNumber" parameterType="String" resultMap="PurchaseorderdetailsResult">
+       select * from purchaseorderdetails where p_number = #{pNumber}
+    </select>
+
+    <select id="selectPurchaseOrderdetailsByFruitId" parameterType="String">
+        select * from purchaseorderdetails where fruit_id = #{fruitId}
+    </select>
+
+    <!--<select id="selectPurchaseorderdetailsByIsStatus" parameterType="Long" resultMap="PurchaseorderdetailsResult">
+            select is_status from purchaseorderdetails
+    </select>-->
+        
+    <insert id="insertPurchaseorderdetails" parameterType="Purchaseorderdetails" useGeneratedKeys="true" keyProperty="pId">
+        insert into purchaseorderdetails
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sId != null">s_id,</if>
+            <if test="pNumber != null">p_number,</if>
+            <if test="fruittypesId != null">fruitTypes_id,</if>
+            <if test="fruitId != null">fruit_id,</if>
+            <if test="fruitName != null">fruit_name,</if>
+            <if test="number != null">number,</if>
+            <if test="price != null">price,</if>
+            <if test="REVISION != null">REVISION,</if>
+            <if test="createdBy != null">CREATED_BY,</if>
+            <if test="createdTime != null">CREATED_TIME,</if>
+            <if test="updatedBy != null">UPDATED_BY,</if>
+            <if test="updatedTime != null">UPDATED_TIME,</if>
+            <if test="isStatus != null">is_status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sId != null">#{sId},</if>
+            <if test="pNumber != null">#{pNumber},</if>
+            <if test="fruittypesId != null">#{fruittypesId},</if>
+            <if test="fruitId != null">#{fruitId},</if>
+            <if test="fruitName != null">#{fruitName},</if>
+            <if test="number != null">#{number},</if>
+            <if test="price != null">#{price},</if>
+            <if test="REVISION != null">#{REVISION},</if>
+            <if test="createdBy != null">#{createdBy},</if>
+            <if test="createdTime != null">#{createdTime},</if>
+            <if test="updatedBy != null">#{updatedBy},</if>
+            <if test="updatedTime != null">#{updatedTime},</if>
+            <if test="isStatus != null">#{isStatus},</if>
+         </trim>
+    </insert>
+
+    <update id="updatePurchaseorderdetails" parameterType="Purchaseorderdetails">
+        update purchaseorderdetails
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sId != null">s_id = #{sId},</if>
+            <if test="pNumber != null">p_number = #{pNumber},</if>
+            <if test="fruittypesId != null">fruitTypes_id = #{fruittypesId},</if>
+            <if test="fruitId != null">fruit_id = #{fruitId},</if>
+            <if test="fruitName != null">fruit_name = #{fruitName},</if>
+            <if test="number != null">number = #{number},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="REVISION != null">REVISION = #{REVISION},</if>
+            <if test="createdBy != null">CREATED_BY = #{createdBy},</if>
+            <if test="createdTime != null">CREATED_TIME = #{createdTime},</if>
+            <if test="updatedBy != null">UPDATED_BY = #{updatedBy},</if>
+            <if test="updatedTime != null">UPDATED_TIME = #{updatedTime},</if>
+            <if test="isStatus != null">is_status = #{isStatus},</if>
+        </trim>
+        where P_id = #{pId}
+    </update>
+
+    <update id="updateStatus"  parameterType="Long">
+            update  purchaseorderdetails
+            set is_status = 3
+            where P_id = #{pId}
+    </update>
+
+    <delete id="deletePurchaseorderdetailsByPId" parameterType="Long">
+        delete from purchaseorderdetails where P_id = #{pId}
+    </delete>
+
+    <delete id="deletePurchaseorderdetailsByPIds" parameterType="String">
+        delete from purchaseorderdetails where P_id in 
+        <foreach item="pId" collection="array" open="(" separator="," close=")">
+            #{pId}
+        </foreach>
+    </delete>
+
+</mapper>

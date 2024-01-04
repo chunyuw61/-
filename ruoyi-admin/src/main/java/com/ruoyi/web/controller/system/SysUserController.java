@@ -29,10 +29,10 @@ import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.common.utils.poi.ExcelUtil;
 import com.ruoyi.framework.shiro.service.SysPasswordService;
 import com.ruoyi.framework.shiro.util.AuthorizationUtils;
-import com.ruoyi.system.service.ISysDeptService;
-import com.ruoyi.system.service.ISysPostService;
-import com.ruoyi.system.service.ISysRoleService;
-import com.ruoyi.system.service.ISysUserService;
+import com.ruoyi.warehousing.service.ISysDeptService;
+import com.ruoyi.warehousing.service.ISysPostService;
+import com.ruoyi.warehousing.service.ISysRoleService;
+import com.ruoyi.warehousing.service.ISysUserService;
 
 /**
  * 用户信息
