@@ -1,26 +1,31 @@
 package com.ruoyi.guoran.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.ruoyi.common.annotation.Excel;
-import com.ruoyi.common.core.domain.BaseEntity;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
 import java.math.BigDecimal;
 import java.util.Date;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import com.ruoyi.common.annotation.Excel;
+import com.ruoyi.common.core.domain.BaseEntity;
+
 /**
- * 门店进货单明细和仓库出货单明细对象 purchaseorderdetails
+ * 进货单明细对象 purchaseorderdetails
  * 
- * @author ruoyi
- * @date 2023-12-28
+ * @author 24k纯帅
+ * @date 2023-12-26
  */
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+
 public class Purchaseorderdetails extends BaseEntity
 {
     private static final long serialVersionUID = 1L;
 
-    /** 序号 */
-    @Excel(name = "序号")
+    /** 主键 */
     private Long pId;
 
     /** 门店编号 */
@@ -33,7 +38,7 @@ public class Purchaseorderdetails extends BaseEntity
 
     /** 水果种类 */
     @Excel(name = "水果种类编号")
-    private String fruittypesId;
+    private Long fruittypesId;
 
     /** 水果编号 */
     @Excel(name = "水果编号")
@@ -43,40 +48,48 @@ public class Purchaseorderdetails extends BaseEntity
     @Excel(name = "水果名称")
     private String fruitName;
 
-    /** 数量 来货数量 */
-    @Excel(name = "数量 来货数量")
+    /** 数量 */
+    @Excel(name = "数量")
     private Double number;
 
-    /** 进货单价 来货价 */
-    @Excel(name = "进货单价 来货价")
+    /** 进货单价 */
+    @Excel(name = "进货单价")
     private BigDecimal price;
 
     /** 乐观锁 */
     private Long REVISION;
 
     /** 创建人 */
-    @Excel(name = "创建人")
     private String createdBy;
 
     /** 创建时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "创建时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date createdTime;
 
     /** 更新人 */
-    @Excel(name = "更新人")
     private String updatedBy;
 
     /** 更新时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "更新时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date updatedTime;
 
-    /** 订单状态 */
-    @Excel(name = "订单状态")
+    /** 状态 */
     private Long isStatus;
 
-    public void setpId(Long pId) 
+    private String s_number;
+
+
+
+    public Purchaseorderdetails(Long pId,String sId, String pNumber, Long fruittypesId, String fruitId, String fruitName, Double number, BigDecimal price) {
+        this.pId = pId;
+        this.sId = sId;
+        this.pNumber = pNumber;
+        this.fruittypesId = fruittypesId;
+        this.fruitId = fruitId;
+        this.fruitName = fruitName;
+        this.number = number;
+        this.price = price;
+    }
+
+    public void setpId(Long pId)
     {
         this.pId = pId;
     }
@@ -85,43 +98,40 @@ public class Purchaseorderdetails extends BaseEntity
     {
         return pId;
     }
-    public void setsId(String sId)
-    {
+
+    public String getsId() {
+        return sId;
+    }
+
+    public void setsId(String sId) {
         this.sId = sId;
     }
 
-    public String getsId()
-    {
-        return sId;
+    public String getpNumber() {
+        return pNumber;
     }
-    public void setpNumber(String pNumber)
-    {
+
+    public void setpNumber(String pNumber) {
         this.pNumber = pNumber;
     }
 
-    public String getpNumber()
-    {
-        return pNumber;
+    public Long getFruittypesId() {
+        return fruittypesId;
     }
-    public void setFruittypesId(String fruittypesId)
-    {
+
+    public void setFruittypesId(Long fruittypesId) {
         this.fruittypesId = fruittypesId;
     }
 
-    public String getFruittypesId()
-    {
-        return fruittypesId;
+    public String getFruitId() {
+        return fruitId;
     }
-    public void setFruitId(String fruitId)
-    {
+
+    public void setFruitId(String fruitId) {
         this.fruitId = fruitId;
     }
 
-    public String getFruitId()
-    {
-        return fruitId;
-    }
-    public void setFruitName(String fruitName) 
+    public void setFruitName(String fruitName)
     {
         this.fruitName = fruitName;
     }
@@ -203,23 +213,32 @@ public class Purchaseorderdetails extends BaseEntity
         return isStatus;
     }
 
+    public String getS_number() {
+        return s_number;
+    }
+
+    public void setS_number(String s_number) {
+        this.s_number = s_number;
+    }
+
     @Override
     public String toString() {
-        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
-            .append("pId", getpId())
-            .append("sId", getsId())
-            .append("pNumber", getpNumber())
-            .append("fruittypesId", getFruittypesId())
-            .append("fruitId", getFruitId())
-            .append("fruitName", getFruitName())
-            .append("number", getNumber())
-            .append("price", getPrice())
-            .append("REVISION", getREVISION())
-            .append("createdBy", getCreatedBy())
-            .append("createdTime", getCreatedTime())
-            .append("updatedBy", getUpdatedBy())
-            .append("updatedTime", getUpdatedTime())
-            .append("isStatus", getIsStatus())
-            .toString();
+        return "Purchaseorderdetails{" +
+                "pId=" + pId +
+                ", sId='" + sId + '\'' +
+                ", pNumber='" + pNumber + '\'' +
+                ", fruittypesId=" + fruittypesId +
+                ", fruitId='" + fruitId + '\'' +
+                ", fruitName='" + fruitName + '\'' +
+                ", number=" + number +
+                ", price=" + price +
+                ", REVISION=" + REVISION +
+                ", createdBy='" + createdBy + '\'' +
+                ", createdTime=" + createdTime +
+                ", updatedBy='" + updatedBy + '\'' +
+                ", updatedTime=" + updatedTime +
+                ", isStatus=" + isStatus +
+                ", s_number='" + s_number + '\'' +
+                '}';
     }
 }

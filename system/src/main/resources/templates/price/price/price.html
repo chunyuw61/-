@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('设价列表')" />
+    <style>
+        /* 模态框样式 */
+        .modal {
+            display: none; /* 默认隐藏 */
+            position: fixed; /* 定位居中 */
+            z-index: 1; /* 在最上层 */
+            padding-top: 100px; /* 距离顶部的距离 */
+            left: 0;
+            top: 0;
+            width: 100%; /* 宽度全屏 */
+            /*height: 100%; !* 高度全屏 *!*/
+
+            background-color: rgb(0,0,0); /* 背景色 */
+            background-color: rgba(0,0,0,0.4); /* 带透明度的背景色 */
+        }
+
+        /* 模态框内容样式 */
+        .modal-content {
+            background-color: #fefefe;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        height: 80%;
+        }
+
+        /* 关闭按钮样式 */
+        .close {
+            color: #aaaaaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>水果编号：</label>
+                                <input type="text" name="fruitId"/>
+                            </li>
+                            <li>
+                                <label>水果名称：</label>
+                                <input type="text" name="name"/>
+                            </li>
+                            <li>
+                                <label>最大金额：</label>
+                                <input type="text" name="maxprice"/>
+                            </li>
+                            <li>
+                                <label>零售价：</label>
+                                <input type="text" name="price"/>
+                            </li>
+                            <li>
+                                <label>折扣：</label>
+                                <input type="text" name="zhekou"/>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+
+
+
+            <!-- 模态框 -->
+            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="myModalLabel">设置价格</h4>
+                        </div>
+                        <div class="modal-body">
+                            <p style="font-size: 18px">水果编号：<input  class="col-sm-4 search-collapse" type="text" id="salePrice" readonly></p>
+                            <p style="font-size: 18px">毛利率：
+                                <!--                        <input type="text" id="grossProfitMargin" class="col-sm-6 search-collapse" readonly>-->
+                                <select class="col-sm-4 search-collapse" id="discountType" onblur="J()">
+                                    <option >选择毛利</option>
+                                    <option value="0.2">20%</option>
+                                    <option value="0.3">30%</option>
+                                    <option value="0.4">40%</option>
+                                    <option value="0.5">50%</option>
+                                    <option value="0.6">60%</option>
+                                    <option value="0.7">70%</option>
+
+                                </select>
+                            </p>
+                            <p style="font-size: 18px">划线价：<input class="col-sm-4 search-collapse" type="text" id="listPrice" readonly></p>
+                            <p style="font-size: 18px">零售价：<input class="col-sm-4 search-collapse" type="text" id="retailPrice" readonly></p>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                            <button type="button" class="btn btn-primary" onclick="BCprice()" >保存</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+<!--           ----------------- -->
+<!--            <div id="myModal" class="modal">-->
+<!--                <div class="modal-content">-->
+<!--                    <span class="close">&times;</span>-->
+<!--<p style="font-size: 18px">水果编号：<input  class="col-sm-6 search-collapse" type="text" id="salePrice" readonly></p>-->
+<!--                    <p style="font-size: 18px">毛利率：-->
+<!--&lt;!&ndash;                        <input type="text" id="grossProfitMargin" class="col-sm-6 search-collapse" readonly>&ndash;&gt;-->
+<!--                        <select class="col-sm-6 search-collapse" id="discountType" onblur="J()">-->
+<!--                            <option >选择毛利</option>-->
+<!--                            <option value="0.2">20%</option>-->
+<!--                            <option value="0.3">30%</option>-->
+<!--                            <option value="0.4">40%</option>-->
+<!--                            <option value="0.5">50%</option>-->
+<!--                            <option value="0.6">60%</option>-->
+<!--                            <option value="0.7">70%</option>-->
+
+<!--                        </select>-->
+<!--                    </p>-->
+<!--                    <p style="font-size: 18px">划线价：<input class="col-sm-6 search-collapse" type="text" id="listPrice" readonly></p>-->
+<!--                    <p style="font-size: 18px">零售价：<input class="col-sm-6 search-collapse" type="text" id="retailPrice" readonly></p>-->
+
+<!--                    <div class="modal-footer">-->
+<!--                        <button style="margin-left: 750px ; margin-top:120px " class="btn btn-primary btn-lg" onclick="BCprice()"> 保存</button>-->
+<!--                    </div>-->
+<!--                </div>-->
+
+<!--            </div>-->
+
+
+
+
+<!--            <div class="btn-group-sm" id="toolbar" role="group">-->
+<!--                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="price:price:add">-->
+<!--                    <i class="fa fa-plus"></i> 添加-->
+<!--                </a>-->
+<!--                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="price:price:edit">-->
+<!--                    <i class="fa fa-edit"></i> 修改-->
+<!--                </a>-->
+<!--                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="price:price:remove">-->
+<!--                    <i class="fa fa-remove"></i> 删除-->
+<!--                </a>-->
+<!--                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="price:price:export">-->
+<!--                    <i class="fa fa-download"></i> 导出-->
+<!--                </a>-->
+<!--            </div>-->
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+
+
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('price:price:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('price:price:remove')}]];
+        var prefix = ctx + "price/price";
+
+        var code;
+        var a;
+        $(function() {
+
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "设价",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field: 'code',
+                    title: '水果编号'
+                },
+                {
+                    field: 'name',
+                    title: '水果名称'
+                },
+                {
+                    field: 'maxprice',
+                    title: '最大金额'
+                },
+                {
+                    field: 'price',
+                    title: '零售价'
+                },
+                {
+                    field: 'zhekou',
+                    title: '折扣'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        code=row.code;
+
+
+                        // a= row.code;
+                        // a='<button id="openModal" onclick="price((\'' + code + '\')" value="code" type="button" class="btn btn-primary btn-xs "  >设计</button>'
+
+                        actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.pId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        actions.push('<button id="openModal" data-toggle="modal" data-target="#myModal" onclick="price(\'' + code + '\')" type="button" class="btn btn-primary btn-xs "  ">设价</button> ');
+                        return actions;
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+
+
+    </script>
+<script>
+    function price(code) {
+
+
+        document.getElementById("salePrice").value = code;
+
+
+    }
+    // var modal = document.getElementById("myModal");
+    // var closeButton = document.getElementsByClassName("close")[0];
+    // closeButton.onclick = function () {
+    //     modal.style.display = "none";
+    // }
+    // // 获取模态框和触发按钮的DOM元素
+    // var modal = document.getElementById("myModal");
+    // var openModalButton = document.getElementById("openModal");
+    // var closeButton = document.getElementsByClassName("close")[0]; // 获取关闭按钮的DOM元素，可能有多个，这里只获取第一个元素
+    //
+    // // 当点击触发按钮时，打开模态框
+    //
+    // openModalButton.addEventListener("click", function() {
+    //
+    // });
+    //
+    //
+    // // 当点击关闭按钮或点击模态框外的区域时，关闭模态框
+    // closeButton.addEventListener("click", function () {
+    //         modal.style.display = "none"; // 隐藏模态框
+    //     }
+    // )
+    //
+    function J(){
+        var code = document.getElementById("salePrice").value;
+        var a = document.getElementById("discountType").value;
+
+        $.ajax({
+            url:"/price/price/selectJ",
+            type: "get",
+            data: {
+                "code":code
+            },
+            success: function (data) {
+
+                console.log(data);
+                console.log(a);
+        //         划线价
+                var linePrice = (data * a) + data; // 计算划线价
+                console.log("划线价: " + linePrice); // 输出划线价
+                document.getElementById("listPrice").value = linePrice;
+                document.getElementById("retailPrice").value = linePrice;
+
+
+        }
+        })
+    }
+    function BCprice(){
+        var modal = document.getElementById("myModal");
+        // 划线价
+        var hxj = document.getElementById("listPrice").value;
+        // 零售价
+        var lsj = document.getElementById("retailPrice").value;
+        //
+        var code = document.getElementById("salePrice").value;
+        $.ajax({
+            url:"/price/price/insertBCprice",
+            type: "post",
+            data: {
+                "hxj":hxj,
+                "lsj":lsj,
+                "code":code
+            },
+            success: function (data) {
+                console.log(data);
+                if (data == 1) {
+                 modal.style.display = "none";
+                }
+
+            }
+        })
+    }
+
+</script>
+</body>
+</html>

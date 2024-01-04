@@ -10,7 +10,7 @@ import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.framework.shiro.service.SysRegisterService;
-import com.ruoyi.system.service.ISysConfigService;
+import com.ruoyi.warehousing.service.ISysConfigService;
 
 /**
  * 注册验证

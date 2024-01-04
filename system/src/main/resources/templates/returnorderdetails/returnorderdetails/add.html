@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增退货单明细')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-returnorderdetails-add">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">门店编号：</label>
+                <div class="col-sm-8">
+                    <input name="sId" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">入库单编号：</label>
+                <div class="col-sm-8">
+                    <input name="warehousingId" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">退货编号：</label>
+                <div class="col-sm-8">
+                    <input name="rdNumber" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">水果类型：</label>
+                <div class="col-sm-8">
+                    <input name="fruittypesId" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">水果编号：</label>
+                <div class="col-sm-8">
+                    <input name="fruitId" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">重量：</label>
+                <div class="col-sm-8">
+                    <input name="rdCount" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">乐观锁：</label>
+                <div class="col-sm-8">
+                    <input name="REVISION" class="form-control" type="text">
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var prefix = ctx + "returnorderdetails/returnorderdetails"
+        $("#form-returnorderdetails-add").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/add", $('#form-returnorderdetails-add').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

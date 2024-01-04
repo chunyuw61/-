@@ -4,10 +4,10 @@ import java.util.List;
 
 import com.ruoyi.common.annotation.DataScope;
 import com.ruoyi.guoran.domain.Warehouse;
+import com.ruoyi.guoran.domain.Warehousestock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.guoran.inventory.mapper.WarehousestockMapper;
-import com.ruoyi.guoran.domain.Warehousestock;
 import com.ruoyi.guoran.inventory.service.IWarehousestockService;
 import com.ruoyi.common.core.text.Convert;
 

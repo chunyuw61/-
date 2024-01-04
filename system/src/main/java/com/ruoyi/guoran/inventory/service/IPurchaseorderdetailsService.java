@@ -6,6 +6,8 @@ import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.guoran.domain.Purchaseorderdetails;
 import com.ruoyi.guoran.domain.Warehousestock;
 
+import java.util.List;
+
 /**
  * 门店进货单明细和仓库出货单明细Service接口
  * 

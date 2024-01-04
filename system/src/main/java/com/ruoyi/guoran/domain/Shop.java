@@ -1,18 +1,17 @@
 package com.ruoyi.guoran.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.ruoyi.common.annotation.Excel;
-import com.ruoyi.common.core.domain.BaseEntity;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
 import java.util.Date;
 
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import com.ruoyi.common.annotation.Excel;
+import com.ruoyi.common.core.domain.BaseEntity;
+
 /**
- * 门店信息对象 return_particulars
+ * 门店信息对象 shop
  * 
- * @author chunyuw61
- * @date 2023-12-29
+ * @author zgf
+ * @date 2023-12-26
  */
 public class Shop extends BaseEntity
 {
@@ -33,8 +32,8 @@ public class Shop extends BaseEntity
     @Excel(name = "门店地址")
     private String sAddress;
 
-    /** 联系人 员工表的外键 */
-    @Excel(name = "联系人 员工表的外键")
+    /** 联系人 */
+    @Excel(name = "联系人")
     private String ren;
 
     /** 联系电话 */
@@ -46,29 +45,21 @@ public class Shop extends BaseEntity
     private String img;
 
     /** 乐观锁 */
-    @Excel(name = "乐观锁")
     private Long REVISION;
 
     /** 创建人 */
-    @Excel(name = "创建人")
     private String createdBy;
 
     /** 创建时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "创建时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date createdTime;
 
     /** 更新人 */
-    @Excel(name = "更新人")
     private String updatedBy;
 
     /** 更新时间 */
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    @Excel(name = "更新时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date updatedTime;
 
     /**  */
-    @Excel(name = "状态")
     private Long isStatus;
 
     public void setsId(Long sId) 
