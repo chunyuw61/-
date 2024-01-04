@@ -12,8 +12,8 @@ import java.util.Date;
 /**
  * 门店顶单对象 doororder
  * 
- * @author ruoyi
- * @date 2023-12-26
+ * @author wmy
+ * @date 2023-12-27
  */
 public class Doororder extends BaseEntity
 {
@@ -23,7 +23,7 @@ public class Doororder extends BaseEntity
     private Long oId;
 
     /** 门店编号 门店外键 */
-    @Excel(name = "门店编号 门店外键")
+   @Excel(name = "门店编号 门店外键")
     private String sId;
 
     /** 订单编号 订单编号 */
@@ -56,8 +56,8 @@ public class Doororder extends BaseEntity
     @Excel(name = "更新时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date updatedTime;
 
-    /** $column.columnComment */
-    @Excel(name = "${comment}", readConverterExp = "$column.readConverterExp()")
+    /**  */
+    @Excel(name = "")
     private Long isStatus;
 
     public void setoId(Long oId) 

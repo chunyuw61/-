@@ -62,7 +62,14 @@ public class Fruits extends BaseEntity
     @Excel(name = "更新时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date updatedTime;
 
-    public void setFruitId(Long fruitId) 
+    public Fruits() {
+    }
+
+    public Fruits(String code) {
+        this.code = code;
+    }
+
+    public void setFruitId(Long fruitId)
     {
         this.fruitId = fruitId;
     }
