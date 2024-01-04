@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.guoran.inventory.mapper.PurchaseorderdetailsMapper">
+    
+    <resultMap type="Purchaseorderdetails" id="PurchaseorderdetailsResult">
+        <result property="pId"    column="P_id"    />
+        <result property="sId"    column="s_id"    />
+        <result property="pNumber"    column="p_number"    />
+        <result property="fruittypesId"    column="fruitTypes_id"    />
+        <result property="fruitId"    column="fruit_id"    />
+        <result property="fruitName"    column="fruit_name"    />
+        <result property="number"    column="number"    />
+        <result property="price"    column="price"    />
+        <result property="REVISION"    column="REVISION"    />
+        <result property="createdBy"    column="CREATED_BY"    />
+        <result property="createdTime"    column="CREATED_TIME"    />
+        <result property="updatedBy"    column="UPDATED_BY"    />
+        <result property="updatedTime"    column="UPDATED_TIME"    />
+        <result property="isStatus"    column="is_status"    />
+    </resultMap>
+
+    <sql id="selectPurchaseorderdetailsVo">
+        select P_id, s_id, p_number, fruitTypes_id, fruit_id, fruit_name, number, price, REVISION, CREATED_BY, CREATED_TIME, UPDATED_BY, UPDATED_TIME, is_status from purchaseorderdetails
+    </sql>
+
+    <select id="selectPurchaseorderdetailsList" parameterType="Purchaseorderdetails" resultMap="PurchaseorderdetailsResult">
+        <include refid="selectPurchaseorderdetailsVo"/>
+        <where>
+            <if test="sId != null and sId != ''">s_id,</if>
+            <if test="pNumber != null and pNumber != ''"> and p_number = #{pNumber}</if>
+            <if test="fruittypesId != null and fruittypesId != ''"> and fruitTypes_id = #{fruittypesId}</if>
+            <if test="fruitId != null and fruitId != ''"> and fruit_id = #{fruitId}</if>
+            <if test="fruitName != null and fruitName != ''"> and fruit_name like concat('%', #{fruitName}, '%')</if>
+            <if test="number != null "> and number = #{number}</if>
+            <if test="price != null "> and price = #{price}</if>
+            <if test="isStatus != null "> and is_status = #{isStatus}</if>
+        </where>
+    </select>
+    
+    <select id="selectPurchaseorderdetailsByPId" parameterType="Long" resultMap="PurchaseorderdetailsResult">
+        <include refid="selectPurchaseorderdetailsVo"/>
+        where P_id = #{pId}
+    </select>
+
+    <select id="selectShopName" parameterType="String" resultType="String">
+        select s_name from shop where s_number = #{sNumber}
+    </select>
+
+    <select id="selectFruitTypeName" parameterType="String" resultType="String">
+        select name from fruittypes where code = #{code}
+    </select>
+
+<!--  审核  -->
+    <update id="auditByPId" parameterType="Purchaseorderdetails">
+        update purchaseorderdetails set is_status = #{isStatus} where P_id = #{pId}
+    </update>
+
+</mapper>

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.shopprice.mapper.ShoppriceMapper">
+    
+    <resultMap type="Shopprice" id="ShoppriceResult">
+        <result property="shoppriceId"    column="shopprice_id"    />
+        <result property="sNumber"    column="s_number"    />
+        <result property="code"    column="code"    />
+        <result property="name"    column="name"    />
+        <result property="price"    column="price"    />
+        <result property="zhekou"    column="zhekou"    />
+        <result property="REVISION"    column="REVISION"    />
+        <result property="createdBy"    column="CREATED_BY"    />
+        <result property="createdTime"    column="CREATED_TIME"    />
+        <result property="updatedBy"    column="UPDATED_BY"    />
+        <result property="updatedTime"    column="UPDATED_TIME"    />
+    </resultMap>
+
+    <sql id="selectShoppriceVo">
+        select shopprice_id, s_number, code, name, price, zhekou, REVISION, CREATED_BY, CREATED_TIME, UPDATED_BY, UPDATED_TIME from shopprice
+    </sql>
+
+    <select id="selectShoppriceList" parameterType="Shopprice" resultMap="ShoppriceResult">
+        <include refid="selectShoppriceVo"/>
+        <where>  
+            <if test="sNumber != null  and sNumber != ''"> and s_number = #{sNumber}</if>
+            <if test="code != null  and code != ''"> and code = #{code}</if>
+            <if test="name != null  and name != ''"> and name like concat('%', #{name}, '%')</if>
+            <if test="price != null "> and price = #{price}</if>
+            <if test="zhekou != null "> and zhekou = #{zhekou}</if>
+        </where>
+    </select>
+    
+    <select id="selectShoppriceByShoppriceId" parameterType="Long" resultMap="ShoppriceResult">
+        <include refid="selectShoppriceVo"/>
+        where shopprice_id = #{shoppriceId}
+    </select>
+        
+    <insert id="insertShopprice" parameterType="Shopprice" useGeneratedKeys="true" keyProperty="shoppriceId">
+        insert into shopprice
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sNumber != null">s_number,</if>
+            <if test="code != null">code,</if>
+            <if test="name != null">name,</if>
+            <if test="price != null">price,</if>
+            <if test="zhekou != null">zhekou,</if>
+            <if test="REVISION != null">REVISION,</if>
+            <if test="createdBy != null">CREATED_BY,</if>
+            <if test="createdTime != null">CREATED_TIME,</if>
+            <if test="updatedBy != null">UPDATED_BY,</if>
+            <if test="updatedTime != null">UPDATED_TIME,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sNumber != null">#{sNumber},</if>
+            <if test="code != null">#{code},</if>
+            <if test="name != null">#{name},</if>
+            <if test="price != null">#{price},</if>
+            <if test="zhekou != null">#{zhekou},</if>
+            <if test="REVISION != null">#{REVISION},</if>
+            <if test="createdBy != null">#{createdBy},</if>
+            <if test="createdTime != null">#{createdTime},</if>
+            <if test="updatedBy != null">#{updatedBy},</if>
+            <if test="updatedTime != null">#{updatedTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateShopprice" parameterType="Shopprice">
+        update shopprice
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sNumber != null">s_number = #{sNumber},</if>
+            <if test="code != null">code = #{code},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="zhekou != null">zhekou = #{zhekou},</if>
+            <if test="REVISION != null">REVISION = #{REVISION},</if>
+            <if test="createdBy != null">CREATED_BY = #{createdBy},</if>
+            <if test="createdTime != null">CREATED_TIME = #{createdTime},</if>
+            <if test="updatedBy != null">UPDATED_BY = #{updatedBy},</if>
+            <if test="updatedTime != null">UPDATED_TIME = #{updatedTime},</if>
+        </trim>
+        where shopprice_id = #{shoppriceId}
+    </update>
+
+    <delete id="deleteShoppriceByShoppriceId" parameterType="Long">
+        delete from shopprice where shopprice_id = #{shoppriceId}
+    </delete>
+
+    <delete id="deleteShoppriceByShoppriceIds" parameterType="String">
+        delete from shopprice where shopprice_id in 
+        <foreach item="shoppriceId" collection="array" open="(" separator="," close=")">
+            #{shoppriceId}
+        </foreach>
+    </delete>
+    <update id="updateprice">
+        update shopprice set price = #{param1}, zhekou = #{param2} where code = #{param3}
+
+    </update>
+
+
+</mapper>

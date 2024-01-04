@@ -189,6 +189,27 @@
                 <version>${ruoyi.version}</version>
             </dependency>
 
+            <!-- 价格管理 -->
+            <dependency>
+                <groupId>com.ruoyi</groupId>
+                <artifactId>price</artifactId>
+                <version>${ruoyi.version}</version>
+            </dependency>
+
+            <!-- 部门管理 -->
+            <dependency>
+                <groupId>com.ruoyi</groupId>
+                <artifactId>department</artifactId>
+                <version>${ruoyi.version}</version>
+            </dependency>
+
+            <!-- 库存管理 -->
+            <dependency>
+                <groupId>com.ruoyi</groupId>
+                <artifactId>inventory</artifactId>
+                <version>${ruoyi.version}</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -200,6 +221,9 @@
         <module>ruoyi-generator</module>
         <module>ruoyi-common</module>
         <module>storeOperations</module>
+        <module>price</module>
+        <module>department</module>
+        <module>system</module>
     </modules>
     <packaging>pom</packaging>
 

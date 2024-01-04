@@ -114,4 +114,10 @@ public interface SysDeptMapper
      * @return 子部门数
      */
     public int selectNormalChildrenDeptById(Long deptId);
+
+    Integer selectID(Long parentId, String deptName, String ancestors);
+
+    Integer insertshop(String snumber, String sname);
+
+    Integer insertCK(String wnumber,String wname);
 }

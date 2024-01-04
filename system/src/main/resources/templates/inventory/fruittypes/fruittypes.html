@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('水果的种类列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>水果种类编号：</label>
+                                <input type="text" name="code"/>
+                            </li>
+                            <li>
+                                <label>水果种类名称：</label>
+                                <input type="text" name="name"/>
+                            </li>
+                            <li>
+                                <label>水果种类状态：</label>
+                                <select name="isStatus" th:with="type=${@dict.getType('fruits')}">
+                                    <option value="">所有</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="inventory:fruittypes:add">
+                    <i class="fa fa-plus"></i> 添加水果种类
+                </a>
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="inventory:fruittypes:remove">
+                    <i class="fa fa-remove"></i> 批量下架
+                </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('inventory:fruittypes:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('inventory:fruittypes:remove')}]];
+        var isStatusDatas = [[${@dict.getType('fruits')}]];
+        var prefix = ctx + "inventory/fruittypes";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "水果的种类",
+                columns: [{
+                    checkbox: true
+                    },
+                    {
+                        field: 'fruittypesId',
+                        title: '序号',
+                        formatter: function (value, row, index) {
+                            return index + 1
+                        }
+                    },
+                    {
+                        field: 'code',
+                        title: '水果种类编号'
+                    },
+                    {
+                        field: 'name',
+                        title: '水果种类名称'
+                    },
+                    {
+                        field: 'createdBy',
+                        title: '创建人'
+                    },
+                    {
+                        field: 'createdTime',
+                        title: '创建时间'
+                    },
+                    {
+                        field: 'updatedBy',
+                        title: '更新人'
+                    },
+                    {
+                        field: 'updatedTime',
+                        title: '更新时间'
+                    },
+                    {
+                        field: 'isStatus',
+                        title: '水果种类状态',
+                        formatter: function(value, row, index) {
+                            if (value === 1) {
+                                return ('<i class="fa fa-toggle-on text-info fa-2x" onclick="fruitTypeBan(' + row.fruittypesId + ',' + 0 + ')"></i>')
+                            } else {
+                                return ('<i class="fa fa-toggle-off text-info fa-2x" onclick="fruitTypeBan(' + row.fruittypesId + ',' + 1 + ')"></i>')
+                            }
+                        }
+                    },
+                    {
+                        title: '操作',
+                        align: 'center',
+                        formatter: function(value, row, index) {
+                            var actions = [];
+                            actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.fruittypesId + '\')"><i class="fa fa-edit"></i>修改水果种类信息</a> ');
+                            // actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.fruittypesId + '\')"><i class="fa fa-remove"></i>下架</a>');
+                            return actions.join('');
+                        }
+                    }]
+                };
+             $.table.init(options);
+            });
+    </script>
+
+     <!--  下架水果  -->
+     <script>
+         // 下架水果
+         function fruitTypeBan(fruittypesId, isStatus) {
+             let msgConfirm;
+             if (isStatus === 0) {
+                 msgConfirm = "确定要下架该水果种类吗?";
+             } else {
+                 msgConfirm = "确定要上架该水果种类吗?"
+             }
+             $.modal.confirm(msgConfirm, function() {
+                 $.modal.loading("正在处理中，请稍后...");
+                 setTimeout(function() {
+                     fruitTypeBans(fruittypesId, isStatus);
+                 }, 1000); // 3000毫秒等于3秒
+             });
+         }
+         function fruitTypeBans(fruittypesId, isStatus) {
+             $.ajax({
+                 url: "/inventory/fruittypes/edit",
+                 data: {
+                     "fruittypesId": fruittypesId,
+                     "isStatus": isStatus
+                 },
+                 dataType: "json",
+                 type: "post",
+                 success: function (resp) {
+                     $.modal.closeLoading(); // 关闭遮罩层
+                     $.modal.msgSuccess(resp.msg);
+                     location.reload();
+                 },
+                 error:function(xhr,type,errorThrown){
+                     console.log('XMLHttpRequest 对象:',xhr);
+                     console.log('错误类型:', type);
+                     console.log('错误描述:', errorThrown);
+                     $.modal.alertError("请求失败");
+                 }
+             })
+         }
+     </script>
+
+</body>
+</html>
