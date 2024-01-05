@@ -133,6 +133,10 @@ public class SalesStatisticsController extends BaseController
     {
         startPage();
         List<SalesStatistics> list = salesStatisticsService.selectSalesStatisticsList(salesStatistics);
+        for (SalesStatistics statistics : list) {
+            System.out.println(statistics);
+        }
+
         return getDataTable(list);
     }
 

@@ -21,7 +21,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select o_id, s_id, o_num, money, REVISION, CREATED_BY, CREATED_TIME, UPDATED_BY, UPDATED_TIME, is_status from doororder
     </sql>
 
-    <select id="selectDoororderList" parameterType="Doororder" resultMap="DoororderResult">
+    <select id="selectDoororderList" parameterType="com.ruoyi.guoran.domain.Doororder" resultMap="DoororderResult">
         <include refid="selectDoororderVo"/>
         <where>  
             <if test="sId != null  and sId != ''"> and s_id = #{sId}</if>
@@ -41,7 +41,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where o_id = #{oId}
     </select>
         
-    <insert id="insertDoororder" parameterType="Doororder" useGeneratedKeys="true" keyProperty="oId">
+    <insert id="insertDoororder" parameterType="com.ruoyi.guoran.domain.Doororder" useGeneratedKeys="true" keyProperty="oId">
         insert into doororder
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="sId != null">s_id,</if>
@@ -67,7 +67,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
          </trim>
     </insert>
 
-    <update id="updateDoororder" parameterType="Doororder">
+    <update id="updateDoororder" parameterType="com.ruoyi.guoran.domain.Doororder">
         update doororder
         <trim prefix="SET" suffixOverrides=",">
             <if test="sId != null">s_id = #{sId},</if>
