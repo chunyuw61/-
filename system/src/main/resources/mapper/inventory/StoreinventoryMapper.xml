@@ -134,9 +134,9 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select w_number, w_name from warehouse
     </select>
 
-<!--  查询所有的门店编号  -->
-    <select id="selectShopId" resultMap="ShopResult">
-        select s_number, s_name from shop
+<!--  根据仓库编号查询所有门店编号  -->
+    <select id="selectShopIdByWareHouseId" resultMap="SysDeptResult">
+        select dept_id, dept_name from sys_dept where ancestors = (select ancestors from sys_dept where dept_id = #{deptId}) and dept_name not like '%仓库'
     </select>
 
 <!--  根据登录门店的父级菜单id,去查询父级菜单的父级菜单的id  -->

@@ -181,11 +181,11 @@ public class StoreinventoryController extends BaseController
     }
 
     /**
-     * 查询所有门店编号
+     * 根据仓库编号查询所有门店编号
      */
-    @PostMapping("/selectShopId")
+    @PostMapping("/selectShopIdByWareHouseId")
     @ResponseBody
-    public ResponseEntity<Map<String, List<Shop>>> selectShopId() {
+    public ResponseEntity<Map<String, List<Shop>>> selectShopIdByWareHouseId(Long deptId) {
         Map<String, List<Shop>> response = new HashMap<>();
         SysUser currentUser = ShiroUtils.getSysUser();
         String userName = currentUser.getUserName(); // 得到登录用户的用户名称
@@ -195,6 +195,7 @@ public class StoreinventoryController extends BaseController
         System.out.println(userName + "的所属部门:" + dept.getDeptName());
         System.out.println("--------------------------------------------------");
         List<Shop> shopList = new ArrayList<>();
+
         Subject subject = ShiroUtils.getSubject();
         List<String> roles = new ArrayList<>();
         roles.add("admin");
@@ -207,7 +208,18 @@ public class StoreinventoryController extends BaseController
             }
         }
         if (hasAnyRole) { // 如果当前用户有admin角色权限或者总经理角色权限的任意一个
-            shopList = storeinventoryService.selectShopId();
+            SysDept sysDept = new SysDept();
+            sysDept.setDeptId(deptId);
+            List<SysDept> sysDepts = storeinventoryService.selectShopIdByWareHouseId(sysDept);
+            System.out.println(sysDepts);
+            for (SysDept sysDept1 : sysDepts) {
+                Shop shop = new Shop();
+                shop.setsNumber(String.valueOf(sysDept1.getDeptId()));
+                shop.setsName(sysDept1.getDeptName());
+                shopList.add(shop);
+            }
+            System.out.println("---------------------------------");
+            System.out.println(shopList);
             System.out.println("当前用户有admin角色权限");
         } else {
             Shop shop = new Shop();
