@@ -33,9 +33,14 @@ public interface IPurchaseorderdetailsService
     public List<Purchaseorderdetails> selectPurchaseorderdetailsList(Purchaseorderdetails purchaseorderdetails);
 
     /**
+     * 根据门店名称 查询门店编号
+     */
+    public String selectShopId(String sName);
+
+    /**
      * 根据门店编号 查询门店名称
      */
-    public String selectShopName(String sNumber);
+    public String selectShopName(SysDept sysDept);
 
     /**
      * 根据水果种类编号 查询水果种类名称

@@ -28,7 +28,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectPurchaseorderdetailsList" parameterType="Purchaseorderdetails" resultMap="PurchaseorderdetailsResult">
         select a.P_id, a.s_id, a.p_number, a.fruitTypes_id, a.fruit_id, a.fruit_name, a.number, a.price,b.s_number,a.is_status from  purchaseorderdetails a left join shop b on a.s_id = b.s_number
         <where>  
-            <if test="sId != null and sId != '' "> and s_id = #{sId}</if>
+            <if test="sId != null and sId != '' "> and a.s_id = #{sId}</if>
             <if test="pNumber != null and pNumber !='' "> and p_number = #{pNumber}</if>
             <if test="fruittypesId != null and fruittypesId !='' "> and fruitTypes_id like concat('%', #{fruittypesId}, '%')</if>
             <if test="fruitId != null  and fruitId != '' "> and fruit_id = #{fruitId}</if>

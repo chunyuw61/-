@@ -114,7 +114,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         select name from fruittypes where code = #{code}
     </select>
 
-<!--  根据水果编号查询水果名称  -->
+<!--  根据水果名称 查询水果编号  -->
+    <select id="selectFruitIdByFruitName" parameterType="String" resultType="String">
+        select code from fruits where name = #{name}
+    </select>
+
+<!--  根据水果编号 查询水果名称  -->
     <select id="selectFruitName" parameterType="String" resultType="String">
         select name from fruits where code = #{code}
     </select>

@@ -60,6 +60,18 @@ public class FruitsController extends BaseController
     }
 
     /**
+     * 根据水果种类名称查询水果种类编号
+     */
+    @PostMapping("/selectFruitTypeId")
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> selectFruitTypeId(@RequestParam String name) {
+        Map<String, String> response = new HashMap<>();
+        String fruitTypeId = fruitsService.selectFruitTypeId(name);
+        response.put("fruitTypeId", fruitTypeId);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
      * 根据水果种类编号查询水果种类名称
      */
     @PostMapping("/selectFruitTypeName")

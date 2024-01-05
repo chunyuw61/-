@@ -99,7 +99,19 @@ public class StoreinventoryController extends BaseController
     }
 
     /**
-     * 根据水果编号查询水果名称
+     * 根据水果名称 查询水果编号
+     */
+    @PostMapping("/selectFruitIdByFruitName")
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> selectFruitIdByFruitName(@RequestParam String name) {
+        Map<String, String> response = new HashMap<>();
+        String fruitId = storeinventoryService.selectFruitIdByFruitName(name);
+        response.put("fruitId", fruitId);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * 根据水果编号 查询水果名称
      */
     @PostMapping("/selectFruitNameByFruitId")
     @ResponseBody

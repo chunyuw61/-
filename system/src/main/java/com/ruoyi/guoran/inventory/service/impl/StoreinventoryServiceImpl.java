@@ -70,6 +70,11 @@ public class StoreinventoryServiceImpl implements IStoreinventoryService
     }
 
     @Override
+    public String selectFruitIdByFruitName(String name) {
+        return storeinventoryMapper.selectFruitIdByFruitName(name);
+    }
+
+    @Override
     public String selectFruitName(String code) {
         return storeinventoryMapper.selectFruitName(code);
     }

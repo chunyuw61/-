@@ -34,7 +34,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="selectPurchaseorderdetailsList" parameterType="Purchaseorderdetails" resultMap="PurchaseorderdetailsResult">
         <include refid="selectPurchaseorderdetailsVo"/>
         <where>
-            <if test="sId != null and sId != ''"> and s_id = #{sId},</if>
+            <if test="sId != null and sId != ''"> and s_id = #{sId}</if>
             <if test="pNumber != null and pNumber != ''"> and p_number = #{pNumber}</if>
             <if test="fruittypesId != null and fruittypesId != ''"> and fruitTypes_id = #{fruittypesId}</if>
             <if test="fruitId != null and fruitId != ''"> and fruit_id = #{fruitId}</if>
@@ -51,18 +51,28 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where P_id = #{pId}
     </select>
 
-    <select id="selectShopName" parameterType="String" resultType="String">
-        select s_name from shop where s_number = #{sNumber}
+<!--  根据门店名称查询门店编号  -->
+    <select id="selectShopId" parameterType="String" resultType="String">
+        select s_number from shop where s_name = #{sName}
     </select>
 
+<!--  根据门店编号查询门店名称  -->
+    <select id="selectShopName" parameterType="SysDept" resultType="String">
+        select dept_name from sys_dept
+        where dept_id = #{deptId}
+        <if test="ancestors != null"> and ancestors = #{ancestors}</if>
+    </select>
+
+<!--  根据水果种类编号查询水果种类名称  -->
     <select id="selectFruitTypeName" parameterType="String" resultType="String">
         select name from fruittypes where code = #{code}
     </select>
 
-<!--  查询登录仓库账号对应的下属门店 (暂时还没有用过该查询语句#lwh) -->
+<!--  查询登录仓库账号对应的下属门店 -->
     <select id="selectPurchaseorderdetailsByWareAncestors" parameterType="SysDept" resultMap="PurchaseorderdetailsResult">
         <include refid="selectPurchaseorderdetailsVo"/>
         where s_id in (select dept_id from sys_dept WHERE ancestors = #{ancestors} and dept_name not like '%仓库')
+        <if test="deptId != null" > and s_id = #{deptId} </if>
     </select>
 
 <!--  审核  -->

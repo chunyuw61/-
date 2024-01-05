@@ -47,8 +47,13 @@ public class PurchaseorderdetailsServiceImpl implements IPurchaseorderdetailsSer
     }
 
     @Override
-    public String selectShopName(String sNumber) {
-        return purchaseorderdetailsMapper.selectShopName(sNumber);
+    public String selectShopId(String sName) {
+        return purchaseorderdetailsMapper.selectShopId(sName);
+    }
+
+    @Override
+    public String selectShopName(SysDept sysDept) {
+        return purchaseorderdetailsMapper.selectShopName(sysDept);
     }
 
     @Override

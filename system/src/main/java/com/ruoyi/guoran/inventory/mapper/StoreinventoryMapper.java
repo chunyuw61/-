@@ -51,7 +51,12 @@ public interface StoreinventoryMapper
     public String selectFruitTypeName(String code);
 
     /**
-     *  根据水果编号查询水果名称
+     *  根据水果名称 查询水果编号
+     */
+    public String selectFruitIdByFruitName(String name);
+
+    /**
+     *  根据水果编号 查询水果名称
      */
     public String selectFruitName(String code);
 
