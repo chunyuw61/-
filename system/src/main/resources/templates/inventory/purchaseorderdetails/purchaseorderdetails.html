@@ -176,7 +176,7 @@
                             console.log(row.fruitId)
                             actions.push('<a class="btn btn-danger btn-xs ' + role + '" onclick="confirmAudit(' + row.pId + ',\'' + row.fruitId + '\',' + row.number + ',' + '3' + ')">确认送达</a> ');
                         } else {
-                            actions.push('<span style="font-size: 12px">无</span>')
+                            actions.push('<span class=" ' + role + ' " style="font-size: 12px">无</span>')
                         }
                         return actions.join('');
                     }

@@ -117,8 +117,8 @@
         })
 
         // 查询对应仓库中有的水果
-        let warehousestockFruitMap = [] // 创建一个仓库的水果的空集合
-        let warehousestockFruitTypeMap = []
+        let warehousestockFruitMap = []; // 创建一个仓库的水果的空集合
+        let warehousestockFruitTypeMap = []; // 创建一个仓库的水果种类的空集合
         function selectWareHouseStockFruit(wareHouseWnumber, wName) {
             $.ajax({
                 url: "/inventory/storeinventory/selectWareHouseStockFruit",
@@ -130,11 +130,15 @@
                 success: function (resp) {
                     warehousestockFruitMap = []; // 清空集合
                     warehousestockFruitTypeMap = []; // 清空集合
+                    console.log("warehousestockFruitTypeMap被清空")
                     for (let i = 0; i < resp.wareHouseList.length; i++) {
                         let wareHouseList = resp.wareHouseList[i];
                         warehousestockFruitMap[i] = wareHouseList.fruitId; // 将查到的水果编号插入到集合中
-                        if (!warehousestockFruitTypeMap.includes(wareHouseList.fruittypesId)) {
-                            warehousestockFruitTypeMap[i] = wareHouseList.fruittypesId;
+                        let warehousestockFruitTypeSet = new Set(warehousestockFruitTypeMap);
+                        let newFruitTypeId = (wareHouseList.fruittypesId);
+                        if (!warehousestockFruitTypeSet.has(newFruitTypeId)) {
+                            warehousestockFruitTypeSet.add(newFruitTypeId);
+                            warehousestockFruitTypeMap = Array.from(warehousestockFruitTypeSet);
                         }
                     }
                     console.log(wName + "仓库中有的水果种类集合:");
@@ -220,15 +224,19 @@
                 success: function (resp) {
                     $("#fruittypesName").empty();
                     fruittypesObj = {}; // 清空对象
+                    console.log("fruittypesObj被清空")
                     $("<option disabled selected></option>").html("请选择水果种类").appendTo("#fruittypesName");
+                    console.log("warehousestockFruitTypeMap")
+                    console.log(warehousestockFruitTypeMap)
                     for (let i = 0; i < resp.fruittypes.length; i++) {
-                        var fruittypes = resp.fruittypes[i];
-                        if (warehousestockFruitTypeMap.includes(fruittypes.code)) { // 如果仓库中有改水果种类的水果,则将该种类插入下拉框
-                            fruittypesObj[fruittypes.name] = fruittypes.code; // 将fruittypes.name作为键，fruittypes.code作为值存入对象中
-                            $("<option></option>").html(fruittypes.name).appendTo("#fruittypesName");
+                        var fruitType = resp.fruittypes[i];
+                        if (warehousestockFruitTypeMap.includes(parseInt(fruitType.code))) { // 如果仓库中有改水果种类的水果,则将该种类插入下拉框
+                            console.log("插入仓库中有的水果种类对象")
+                            fruittypesObj[fruitType.name] = fruitType.code; // 将fruittypes.name作为键，fruittypes.code作为值存入对象中
+                            $("<option></option>").html(fruitType.name).appendTo("#fruittypesName");
                         }
                     }
-                    console.log($("#deliveryWarehouseName").val() + "仓库中有的水果种类:");
+                    console.log($("#deliveryWarehouseName").val() + "仓库中有的水果种类对象xxx:");
                     console.log(fruittypesObj);
                 },
                 error:function(xhr,type,errorThrown){
