@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.guoran.orderforgoods.mapper.OrderShopMapper">
+    
+    <resultMap type="OrderShop" id="ShopResult">
+        <result property="sId"    column="s_id"    />
+        <result property="sNumber"    column="s_number"    />
+        <result property="sName"    column="s_name"    />
+        <result property="sAddress"    column="s_address"    />
+        <result property="ren"    column="ren"    />
+        <result property="phone"    column="phone"    />
+        <result property="img"    column="img"    />
+        <result property="REVISION"    column="REVISION"    />
+        <result property="createdBy"    column="CREATED_BY"    />
+        <result property="createdTime"    column="CREATED_TIME"    />
+        <result property="updatedBy"    column="UPDATED_BY"    />
+        <result property="updatedTime"    column="UPDATED_TIME"    />
+        <result property="isStatus"    column="is_status"    />
+    </resultMap>
+
+    <sql id="selectShopVo">
+        select s_id, s_number, s_name, s_address, ren, phone, img, REVISION, CREATED_BY, CREATED_TIME, UPDATED_BY, UPDATED_TIME, is_status from shop
+    </sql>
+
+    <select id="selectShopList" parameterType="OrderShop" resultMap="ShopResult">
+        <include refid="selectShopVo"/>
+        <where>  
+            <if test="sNumber != null  and sNumber != ''"> and s_number = #{sNumber}</if>
+            <if test="sName != null  and sName != ''"> and s_name like concat('%', #{sName}, '%')</if>
+            <if test="sAddress != null  and sAddress != ''"> and s_address = #{sAddress}</if>
+            <if test="ren != null  and ren != ''"> and ren = #{ren}</if>
+            <if test="phone != null  and phone != ''"> and phone = #{phone}</if>
+            <if test="img != null  and img != ''"> and img = #{img}</if>
+            <if test="REVISION != null "> and REVISION = #{REVISION}</if>
+            <if test="createdBy != null  and createdBy != ''"> and CREATED_BY = #{createdBy}</if>
+            <if test="createdTime != null "> and CREATED_TIME = #{createdTime}</if>
+            <if test="updatedBy != null  and updatedBy != ''"> and UPDATED_BY = #{updatedBy}</if>
+            <if test="updatedTime != null "> and UPDATED_TIME = #{updatedTime}</if>
+            <if test="isStatus != null "> and is_status = #{isStatus}</if>
+        </where>
+    </select>
+    
+    <select id="selectShopBySId" parameterType="Long" resultMap="ShopResult">
+        <include refid="selectShopVo"/>
+        where s_id = #{sId}
+    </select>
+        
+    <insert id="insertShop" parameterType="OrderShop" useGeneratedKeys="true" keyProperty="sId">
+        insert into return_particulars
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="sNumber != null">s_number,</if>
+            <if test="sName != null">s_name,</if>
+            <if test="sAddress != null">s_address,</if>
+            <if test="ren != null">ren,</if>
+            <if test="phone != null">phone,</if>
+            <if test="img != null">img,</if>
+            <if test="REVISION != null">REVISION,</if>
+            <if test="createdBy != null">CREATED_BY,</if>
+            <if test="createdTime != null">CREATED_TIME,</if>
+            <if test="updatedBy != null">UPDATED_BY,</if>
+            <if test="updatedTime != null">UPDATED_TIME,</if>
+            <if test="isStatus != null">is_status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="sNumber != null">#{sNumber},</if>
+            <if test="sName != null">#{sName},</if>
+            <if test="sAddress != null">#{sAddress},</if>
+            <if test="ren != null">#{ren},</if>
+            <if test="phone != null">#{phone},</if>
+            <if test="img != null">#{img},</if>
+            <if test="REVISION != null">#{REVISION},</if>
+            <if test="createdBy != null">#{createdBy},</if>
+            <if test="createdTime != null">#{createdTime},</if>
+            <if test="updatedBy != null">#{updatedBy},</if>
+            <if test="updatedTime != null">#{updatedTime},</if>
+            <if test="isStatus != null">#{isStatus},</if>
+         </trim>
+    </insert>
+
+    <update id="updateShop" parameterType="OrderShop">
+        update return_particulars
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="sNumber != null">s_number = #{sNumber},</if>
+            <if test="sName != null">s_name = #{sName},</if>
+            <if test="sAddress != null">s_address = #{sAddress},</if>
+            <if test="ren != null">ren = #{ren},</if>
+            <if test="phone != null">phone = #{phone},</if>
+            <if test="img != null">img = #{img},</if>
+            <if test="REVISION != null">REVISION = #{REVISION},</if>
+            <if test="createdBy != null">CREATED_BY = #{createdBy},</if>
+            <if test="createdTime != null">CREATED_TIME = #{createdTime},</if>
+            <if test="updatedBy != null">UPDATED_BY = #{updatedBy},</if>
+            <if test="updatedTime != null">UPDATED_TIME = #{updatedTime},</if>
+            <if test="isStatus != null">is_status = #{isStatus},</if>
+        </trim>
+        where s_id = #{sId}
+    </update>
+
+    <delete id="deleteShopBySId" parameterType="Long">
+        delete from return_particulars where s_id = #{sId}
+    </delete>
+
+    <delete id="deleteShopBySIds" parameterType="String">
+        delete from return_particulars where s_id in 
+        <foreach item="sId" collection="array" open="(" separator="," close=")">
+            #{sId}
+        </foreach>
+    </delete>
+
+</mapper>
