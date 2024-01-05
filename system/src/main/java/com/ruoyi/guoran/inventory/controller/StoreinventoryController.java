@@ -99,7 +99,19 @@ public class StoreinventoryController extends BaseController
     }
 
     /**
-     * 根据水果编号查询水果名称
+     * 根据水果名称 查询水果编号
+     */
+    @PostMapping("/selectFruitIdByFruitName")
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> selectFruitIdByFruitName(@RequestParam String name) {
+        Map<String, String> response = new HashMap<>();
+        String fruitId = storeinventoryService.selectFruitIdByFruitName(name);
+        response.put("fruitId", fruitId);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
+     * 根据水果编号 查询水果名称
      */
     @PostMapping("/selectFruitNameByFruitId")
     @ResponseBody
@@ -135,17 +147,14 @@ public class StoreinventoryController extends BaseController
         System.out.println("--------------------------------------------------");
         System.out.println(userName + "的部门id:" + currentUser.getDeptId());
         System.out.println(userName + "的所属部门:" + dept.getDeptName());
-        System.out.println(userName + "的父级菜单id:" + dept.getParentId());
+        System.out.println(userName + "的菜单列表id:" + dept.getAncestors());
         System.out.println(userName + "的部门信息对象:" + dept);
         System.out.println("--------------------------------------------------");
-        int parentId = storeinventoryService.selectParentIdByParentId(Math.toIntExact(dept.getParentId()));
-        System.out.println(userName + "的父级id的父级部门id:" + parentId);
         List<Warehouse> warehouseList = new ArrayList<>();
-        Warehouse warehouse = new Warehouse();
         Subject subject = ShiroUtils.getSubject();
         List<String> roles = new ArrayList<>();
         roles.add("admin");
-        roles.add("manger");
+        roles.add("manger"); // 总经理权限
         boolean hasAnyRole = false;
         for (String role : roles) {
             if (subject.hasRole(role)) {
@@ -157,17 +166,16 @@ public class StoreinventoryController extends BaseController
             warehouseList = storeinventoryService.selectWareHouseId();
             System.out.println("当前用户有admin角色权限");
         } else {
-            if (parentId == 101) { // 如果该店的父级id的父级部门id是101(太原总公司)
-                warehouse.setwNumber("203");
-                warehouse.setwName("龙城仓库");
-                warehouseList.add(warehouse);
-            } else if (parentId == 102) { // 如果该店的父级id的父级部门id是102(北京分公司)
-                warehouse.setwNumber("205");
-                warehouse.setwName("首都仓库");
-                warehouseList.add(warehouse);
-            }
+            SysDept sysDept = new SysDept(); // 部门表的对象
+            sysDept.setAncestors(dept.getAncestors());
+            SysDept sysDept1 = storeinventoryService.selectWareAncestorsByShopAncestors(sysDept);
+            System.out.println(userName + "的配货仓库对象:" + sysDept1);
+            Warehouse warehouse = new Warehouse();
+            warehouse.setwNumber(String.valueOf(sysDept1.getDeptId()));
+            warehouse.setwName(sysDept1.getDeptName());
+            warehouseList.add(warehouse);
         }
-        System.out.println(warehouseList);
+        System.out.println("传出的仓库对象集合" + warehouseList);
         response.put("wareHouse", warehouseList);
         return ResponseEntity.ok(response);
     }
@@ -205,6 +213,7 @@ public class StoreinventoryController extends BaseController
             Shop shop = new Shop();
             shop.setsNumber(String.valueOf(currentUser.getDeptId()));
             shop.setsName(dept.getDeptName());
+            System.out.println(userName + "传出的门店对象:" + shop);
             shopList.add(shop); // 将类写入集合
         }
         response.put("shop", shopList);

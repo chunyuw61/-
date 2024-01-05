@@ -10,17 +10,25 @@
                 <form id="formId">
                     <div class="select-list">
                         <ul>
-                            <li shiro:hasRole="admin">
+                            <li shiro:lacksRole="DragonWarehouseAdministrator">
                                 <label>仓库编号：</label>
-                                <input type="text" name="wId"/>
+                                <input type="text" id="wId" name="wId" placeholder="全名"/>
+                            </li>
+                            <li shiro:lacksRole="DragonWarehouseAdministrator">
+                                <label>仓库名称：</label>
+                                <input type="text" id="wName" name="wName" placeholder="全名"/>
                             </li>
                             <li>
                                 <label>水果种类编号：</label>
-                                <input type="text" name="fruittypesId"/>
+                                <input type="text" id="fruittypesId" name="fruittypesId" placeholder="全名"/>
+                            </li>
+                            <li>
+                                <label>水果种类名称：</label>
+                                <input type="text" id="fruittypesName" name="fruittypesName" placeholder="全名"/>
                             </li>
                             <li>
                                 <label>水果编号：</label>
-                                <input type="text" name="fruitId"/>
+                                <input type="text" name="fruitId" placeholder="全名"/>
                             </li>
                             <li>
                                 <label>水果名称：</label>
@@ -176,8 +184,141 @@
             $.table.init(options);
         });
     </script>
-<!--  向表格中插入仓库名称和水果种类名称   -->
+
+     <!--  根据水果种类名称查询水果种类编号  -->
      <script>
+         $(document).ready(function () {
+             $("#fruittypesName").on('input', function () {
+                 var fruittypesName = $(this).val();
+                 if (fruittypesName) {
+                     selectFruitTypeIdByFruitTypeName(fruittypesName);
+                 } else {
+                     $("#fruittypesId").val(""); // 如果输入框为空就清空水果种类编号输入框
+                 }
+             })
+         })
+         function selectFruitTypeIdByFruitTypeName(fruittypesName) {
+             $.ajax({
+                 url: "/inventory/fruits/selectFruitTypeId",
+                 dataType: "json",
+                 data: {
+                     "name": fruittypesName
+                 },
+                 type: "post",
+                 success: function (resp) {
+                     if (resp.fruitTypeId != null && resp.fruitTypeId !== "") {
+                         $("#fruittypesId").val(resp.fruitTypeId);
+                     } else {
+                         $("#fruittypesId").val(""); // 如果查不到就清空水果种类编号输入框
+                     }
+                 },
+                 error:function(xhr,type,errorThrown){
+                     console.log('XMLHttpRequest 对象:',xhr);
+                     console.log('错误类型:', type);
+                     console.log('错误描述:', errorThrown);
+                     $.modal.alertError("请求失败");
+                 }
+             })
+         }
+     </script>
+
+     <!--  根据水果种类编号查询水果种类名称  -->
+     <script>
+        // 监测水果种类id输入框
+         $(document).ready(function () {
+             $("#fruittypesId").on('input', function () {
+                 var fruittypesId = $(this).val();
+                 if (fruittypesId) {
+                     selectFruitTypeNameByFruitTypeId(fruittypesId);
+                 } else {
+                     $("#fruittypesName").val(""); // 如果输入框为空就清空水果种类编号输入框
+                 }
+             })
+         })
+
+        // 根据水果种类编号查询水果种类名称
+        function selectFruitTypeNameByFruitTypeId(fruittypesId, index) {
+            $.ajax({
+                url: "/inventory/warehousestock/selectFruitTypeName",
+                dataType: "json",
+                data: {
+                    "code": fruittypesId
+                },
+                type: "post",
+                success: function (resp) {
+                    if (index != null) {
+                        $("#fruitTypeNameSpan" + index).html(resp.fruitTypeName);
+                    } else {
+                        if (resp.fruitTypeName != null && resp.fruitTypeName !== "") {
+                            $("#fruittypesName").val(resp.fruitTypeName);
+                        } else {
+                            $("#fruittypesName").val(""); // 如果查不到就清空水果种类名称输入框
+                        }
+                    }
+                },
+                error:function(xhr,type,errorThrown){
+                    console.log('XMLHttpRequest 对象:',xhr);
+                    console.log('错误类型:', type);
+                    console.log('错误描述:', errorThrown);
+                    $.modal.alertError("请求失败");
+                }
+            })
+        }
+     </script>
+
+<!--  根据仓库名称查询仓库编号  -->
+        <script>
+            // 监测仓库名称输入框
+            $(document).ready(function () {
+                $("#wName").on('input', function () {
+                    var wName = $(this).val();
+                    if (wName) {
+                        selectWareHouseIdByWareHouseName(wName);
+                    } else {
+                        $("#wId").val(""); // 如果输入框为空就清空仓库编号输入框
+                    }
+                })
+            })
+            // 根据仓库名称查询仓库编号
+            function selectWareHouseIdByWareHouseName(wName, index) {
+                $.ajax({
+                    url: "/inventory/warehousestock/selectWareHouseId",
+                    dataType: "json",
+                    data: {
+                        "wName": wName
+                    },
+                    type: "post",
+                    success: function (resp) {
+                        if (resp.wareHouseId != null && resp.wareHouseId !== "") {
+                            $("#wId").val(resp.wareHouseId);
+                        } else {
+                            $("#wId").val(""); // 如果查不到就清空仓库编号输入框
+                        }
+                    },
+                    error:function(xhr,type,errorThrown){
+                        console.log('XMLHttpRequest 对象:',xhr);
+                        console.log('错误类型:', type);
+                        console.log('错误描述:', errorThrown);
+                        $.modal.alertError("请求失败");
+                    }
+                })
+            }
+
+        </script>
+
+<!--  根据仓库编号查询仓库名称   -->
+     <script>
+         // 监测仓库名称输入框
+         $(document).ready(function () {
+             $("#wId").on('input', function () {
+                 var wId = $(this).val();
+                 if (wId) {
+                     selectWareHouseNameByWareHouseId(wId);
+                 } else {
+                     $("#wName").val(""); // 如果输入框为空就清空仓库名称输入框
+                 }
+             })
+         })
          // 根据仓库编号查询仓库名称
          function selectWareHouseNameByWareHouseId(wId, index) {
              $.ajax({
@@ -188,7 +329,15 @@
                  },
                  type: "post",
                  success: function (resp) {
-                     $("#wareHouseNameSpan" + index).html(resp.wareHouseName)
+                     if (index != null) {
+                         $("#wareHouseNameSpan" + index).html(resp.wareHouseName);
+                     } else {
+                         if (resp.wareHouseName != null && resp.wareHouseName !== "") {
+                             $("#wName").val(resp.wareHouseName);
+                         } else {
+                             $("#wName").val(""); // 如果查不到就清空仓库名称输入框
+                         }
+                     }
                  },
                  error:function(xhr,type,errorThrown){
                      console.log('XMLHttpRequest 对象:',xhr);
@@ -199,26 +348,6 @@
              })
          }
 
-         // 根据水果种类编号查询水果种类名称
-         function selectFruitTypeNameByFruitTypeId(fruittypesId, index) {
-             $.ajax({
-                 url: "/inventory/warehousestock/selectFruitTypeName",
-                 dataType: "json",
-                 data: {
-                     "code": fruittypesId
-                 },
-                 type: "post",
-                 success: function (resp) {
-                     $("#fruitTypeNameSpan" + index).html(resp.fruitTypeName)
-                 },
-                 error:function(xhr,type,errorThrown){
-                     console.log('XMLHttpRequest 对象:',xhr);
-                     console.log('错误类型:', type);
-                     console.log('错误描述:', errorThrown);
-                     $.modal.alertError("请求失败");
-                 }
-             })
-         }
      </script>
 
 <!--  下架水果  -->

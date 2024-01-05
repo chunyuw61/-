@@ -27,6 +27,11 @@ public interface WarehousestockMapper
     public List<String> selectFruitId(String wId);
 
     /**
+     * 根据仓库名称查询仓库编号
+     */
+    public String selectWareHouseId(String wName);
+
+    /**
      * 根据仓库编号 查询仓库名称
      */
     public String selectWareHouseName(String wNumber);

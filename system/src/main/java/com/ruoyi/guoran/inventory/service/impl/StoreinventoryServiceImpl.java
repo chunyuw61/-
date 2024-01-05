@@ -3,10 +3,11 @@ package com.ruoyi.guoran.inventory.service.impl;
 import java.util.List;
 
 import com.ruoyi.common.annotation.DataScope;
-import com.ruoyi.guoran.domain.Shop;
+import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.guoran.domain.Warehousestock;
 import com.ruoyi.guoran.inventory.service.IStoreinventoryService;
 import com.ruoyi.guoran.domain.Warehouse;
+import com.ruoyi.guoran.domain.Shop;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.guoran.inventory.mapper.StoreinventoryMapper;
@@ -69,6 +70,11 @@ public class StoreinventoryServiceImpl implements IStoreinventoryService
     }
 
     @Override
+    public String selectFruitIdByFruitName(String name) {
+        return storeinventoryMapper.selectFruitIdByFruitName(name);
+    }
+
+    @Override
     public String selectFruitName(String code) {
         return storeinventoryMapper.selectFruitName(code);
     }
@@ -89,8 +95,8 @@ public class StoreinventoryServiceImpl implements IStoreinventoryService
     }
 
     @Override
-    public int selectParentIdByParentId(int parentId) {
-        return storeinventoryMapper.selectParentIdByParentId(parentId);
+    public SysDept selectWareAncestorsByShopAncestors(SysDept sysDept) {
+        return storeinventoryMapper.selectWareAncestorsByShopAncestors(sysDept);
     }
 
     /**
