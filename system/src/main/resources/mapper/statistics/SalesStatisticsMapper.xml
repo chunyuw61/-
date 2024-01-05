@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.guoran.statistics.mapper.SalesStatisticsMapper1">
+    
+    <resultMap type="SalesStatistics" id="SalesStatisticsResult">
+        <result property="salesStatisticId"    column="sales_statistic_id"    />
+        <result property="oId"    column="o_id"    />
+        <result property="sId"    column="s_id"    />
+        <result property="date"    column="date"    />
+        <result property="turnover"    column="turnover"    />
+        <result property="passengerFlow"    column="passenger_flow"    />
+        <result property="avgSales"    column="avg_sales"    />
+        <result property="revision"    column="revision"    />
+        <result property="isStatus"    column="is_status"    />
+        <result property="createdBy"    column="created_by"    />
+        <result property="createdTime"    column="created_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+    </resultMap>
+
+    <sql id="selectSalesStatisticsVo">
+        select sales_statistic_id, o_id, s_id, date, turnover, passenger_flow, avg_sales, revision, is_status, created_by, created_time, update_by, update_time from sales_statistics
+    </sql>
+
+
+    <select id="selectSalesStatisticsList" parameterType="SalesStatistics" resultMap="SalesStatisticsResult">
+        <include refid="selectSalesStatisticsVo"/>
+        <where>  
+            <if test="oId != null "> and o_id = #{oId}</if>
+            <if test="sId != null  and sId != ''"> and s_id = #{sId}</if>
+            <if test="date != null "> and date = #{date}</if>
+            <if test="turnover != null "> and turnover = #{turnover}</if>
+            <if test="passengerFlow != null "> and passenger_flow = #{passengerFlow}</if>
+            <if test="avgSales != null "> and avg_sales = #{avgSales}</if>
+            <if test="revision != null "> and revision = #{revision}</if>
+            <if test="isStatus != null "> and is_status = #{isStatus}</if>
+            <if test="createdBy != null  and createdBy != ''"> and created_by = #{createdBy}</if>
+            <if test="createdTime != null "> and created_time = #{createdTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectSalesStatisticsBySalesStatisticId" parameterType="Long" resultMap="SalesStatisticsResult">
+        <include refid="selectSalesStatisticsVo"/>
+        where sales_statistic_id = #{salesStatisticId}
+    </select>
+        
+    <insert id="insertSalesStatistics" parameterType="SalesStatistics" useGeneratedKeys="true" keyProperty="salesStatisticId">
+        insert into sales_statistics
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="oId != null">o_id,</if>
+            <if test="sId != null">s_id,</if>
+            <if test="date != null">date,</if>
+            <if test="turnover != null">turnover,</if>
+            <if test="passengerFlow != null">passenger_flow,</if>
+            <if test="avgSales != null">avg_sales,</if>
+            <if test="revision != null">revision,</if>
+            <if test="isStatus != null">is_status,</if>
+            <if test="createdBy != null">created_by,</if>
+            <if test="createdTime != null">created_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="oId != null">#{oId},</if>
+            <if test="sId != null">#{sId},</if>
+            <if test="date != null">#{date},</if>
+            <if test="turnover != null">#{turnover},</if>
+            <if test="passengerFlow != null">#{passengerFlow},</if>
+            <if test="avgSales != null">#{avgSales},</if>
+            <if test="revision != null">#{revision},</if>
+            <if test="isStatus != null">#{isStatus},</if>
+            <if test="createdBy != null">#{createdBy},</if>
+            <if test="createdTime != null">#{createdTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateSalesStatistics" parameterType="SalesStatistics">
+        update sales_statistics
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="oId != null">o_id = #{oId},</if>
+            <if test="sId != null">s_id = #{sId},</if>
+            <if test="date != null">date = #{date},</if>
+            <if test="turnover != null">turnover = #{turnover},</if>
+            <if test="passengerFlow != null">passenger_flow = #{passengerFlow},</if>
+            <if test="avgSales != null">avg_sales = #{avgSales},</if>
+            <if test="revision != null">revision = #{revision},</if>
+            <if test="isStatus != null">is_status = #{isStatus},</if>
+            <if test="createdBy != null">created_by = #{createdBy},</if>
+            <if test="createdTime != null">created_time = #{createdTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+        </trim>
+        where sales_statistic_id = #{salesStatisticId}
+    </update>
+
+    <delete id="deleteSalesStatisticsBySalesStatisticId" parameterType="Long">
+        delete from sales_statistics where sales_statistic_id = #{salesStatisticId}
+    </delete>
+
+    <delete id="deleteSalesStatisticsBySalesStatisticIds" parameterType="String">
+        delete from sales_statistics where sales_statistic_id in 
+        <foreach item="salesStatisticId" collection="array" open="(" separator="," close=")">
+            #{salesStatisticId}
+        </foreach>
+    </delete>
+
+
+
+</mapper>

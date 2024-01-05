@@ -7,7 +7,7 @@ import java.util.Map;
 
 import com.ruoyi.guoran.domain.Storeinventory;
 import com.ruoyi.guoran.inventory.service.IFruitsService;
-import com.ruoyi.guoran.orderforgood.service.impl.StoreInventoryServiceImpl;
+
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -36,8 +36,8 @@ public class FruitsController extends BaseController
     
     @Autowired
     private IFruitsService fruitsService;
-    @Autowired
-    private StoreInventoryServiceImpl storeinventoryService;
+/*    @Autowired
+    private StoreInventoryServiceImpl storeinventoryService;*/
 
     @RequiresPermissions("inventory:fruits:view")
     @GetMapping()
@@ -166,7 +166,7 @@ public class FruitsController extends BaseController
         return toAjax(fruitsService.deleteFruitsByFruitIds(ids));
     }
 
-    @RequestMapping("/inquireByFruittypesId")
+/*    @RequestMapping("/inquireByFruittypesId")
     public ResponseEntity<List<Fruits>> inquireByFruittypesId(@RequestParam String fruittypesId){
         Storeinventory storeinventory = new Storeinventory();
         storeinventory.setFruittypesId(fruittypesId);
@@ -196,6 +196,6 @@ public class FruitsController extends BaseController
             System.out.println(fruit);
         }
         return ResponseEntity.ok(fruits);
-    }
+    }*/
 
 }

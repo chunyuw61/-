@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('门店退单列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <label>订单编号</label>
+                                <input id="oId" type="text" name="oId"/>
+                            </li>
+<!--                            <li>-->
+<!--                                <label>水果编号</label>-->
+<!--                                <input type="text" name="fruitpriceId"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <label>重量</label>-->
+<!--                                <input type="text" name="count"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <label>单品金额</label>-->
+<!--                                <input type="text" name="money"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <label>金额</label>-->
+<!--                                <input type="text" name="totalmoney"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <label>消费时间</label>-->
+<!--                                <input type="text" class="time-input" placeholder="请选择消费时间 购买时间" name="datetime"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <label>乐观锁：</label>-->
+<!--                                <input type="text" name="REVISION"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <label>创建人：</label>-->
+<!--                                <input type="text" name="createdBy"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <label>创建时间：</label>-->
+<!--                                <input type="text" class="time-input" placeholder="请选择创建时间" name="createdTime"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <label>更新人：</label>-->
+<!--                                <input type="text" name="updatedBy"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <label>更新时间：</label>-->
+<!--                                <input type="text" class="time-input" placeholder="请选择更新时间" name="updatedTime"/>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <label>状态：</label>-->
+<!--                                <select name="isStatus" th:with="type=${@dict.getType('back_order')}">-->
+<!--                                    <option value="">所有</option>-->
+<!--                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>-->
+<!--                                </select>-->
+<!--                            </li>-->
+<!--                            <li>-->
+<!--                                <label>门店编号：</label>-->
+<!--                                <input type="text" name="sId"/>-->
+<!--                            </li>-->
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="searchOrder()"><i class="fa fa-search"></i>&nbsp;搜索</a>
+<!--                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;重置</a>-->
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+<!--            <div class="btn-group-sm" id="toolbar" role="group">-->
+<!--                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="salesorderdetails:salesorderdetails:add">-->
+<!--                    <i class="fa fa-plus"></i> 添加-->
+<!--                </a>-->
+<!--                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="salesorderdetails:salesorderdetails:edit">-->
+<!--                    <i class="fa fa-edit"></i> 修改-->
+<!--                </a>-->
+<!--                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="salesorderdetails:salesorderdetails:remove">-->
+<!--                    <i class="fa fa-remove"></i> 删除-->
+<!--                </a>-->
+<!--                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="salesorderdetails:salesorderdetails:export">-->
+<!--                    <i class="fa fa-download"></i> 导出-->
+<!--                </a>-->
+<!--            </div>-->
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('salesorderdetails:salesorderdetails:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('salesorderdetails:salesorderdetails:remove')}]];
+        var isStatusDatas = [[${@dict.getType('back_order')}]];
+        var prefix = ctx + "salesorderdetails/salesorderdetails";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "门店退单",
+                showSearch: false,
+                showRefresh: false,
+                showToggle: false,
+                showColumns: false,
+                firstLoad: false,
+                columns: [{
+                    checkbox: false
+                },
+                {
+                    field: 'salesorderdetailsId',
+                    title: '主键id',
+                    visible: false
+                },
+                {
+                    field: 'oId',
+                    title: '订单编号'
+                },
+                {
+                    field: 'fruits.name',
+                    title: '水果名称'
+                },
+                {
+                    field: 'count',
+                    title: '重量'
+                },
+                {
+                    field: 'money',
+                    title: '单价'
+                },
+                {
+                    field: 'totalmoney',
+                    title: '金额'
+                },
+                {
+                    field: 'datetime',
+                    title: '消费时间'
+                },
+                {
+                    field: 'REVISION',
+                    title: '乐观锁',
+                    visible: false
+                },
+                {
+                    field: 'createdBy',
+                    title: '创建人',
+                    visible: false
+                },
+                {
+                    field: 'createdTime',
+                    title: '创建时间',
+                    visible: false
+                },
+                {
+                    field: 'updatedBy',
+                    title: '处理人'
+                },
+                {
+                    field: 'updatedTime',
+                    title: '处理时间'
+                },
+                {
+                    field: 'isStatus',
+                    title: '状态',
+                    formatter: function(value, row, index) {
+                       return $.table.selectDictLabel(isStatusDatas, value);
+                    }
+                },
+                {
+                    field: 'sId',
+                    title: '门店编号'
+                },
+                {
+                    title: '操作',
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        // actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.salesorderdetailsId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
+                        // actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.salesorderdetailsId + '\')"><i class="fa fa-remove"></i>删除</a>');
+                        actions.push('<a class="btn btn-danger btn-xs '+ '" href="javascript:void(0)" onclick="chargeback(\'' + row.salesorderdetailsId + '\',\''+row.oId+'\',\''+row.totalmoney+'\' ,\''+row.sId+'\')"><i class="fa fa-remove"></i>退单</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+
+        function chargeback(id,oId,totalMoney,sId) {
+            layer.prompt({title: '退单前请输入密码，并确认',formType:1},function (password,index){
+                if(password == 123){
+                    layer.close(index)
+                    $.ajax({
+                        url:"/salesorderdetails/salesorderdetails/chargeback",
+                        type:"post",
+                        data:{"id":id,"oId":oId,"totalMoney":totalMoney,"sId":sId},
+                        success: function (res) {
+                            if (res == "yes"){
+                                $.modal.confirm("退单成功！")
+                                //刷新当前页面(重新查询)
+                                location.reload();
+                            } else {
+                                $.modal.confirm("退单失败！")
+                            }
+                        }
+                    })
+                } else {
+                    layer.msg("密码错误!")
+                    layer.close(index)
+                }
+            })
+        }
+
+
+        function searchOrder() {
+            var orderNumber = document.getElementById('oId').value;
+            if (orderNumber === "" ) {
+                layer.msg("请输入单号")
+            } else {
+                $.table.search()
+            }
+        }
+    </script>
+</body>
+</html>

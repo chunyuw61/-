@@ -1,139 +1,151 @@
 package com.ruoyi.guoran.domain;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.ruoyi.guoran.domain.Fruits;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import com.ruoyi.common.annotation.Excel;
 import com.ruoyi.common.core.domain.BaseEntity;
 
-import java.math.BigDecimal;
-import java.util.Date;
-
 /**
- * 销售订单明细对象 salesorderdetails
- *
+ * 门店退单对象 salesorderdetails
+ * 
  * @author ruoyi
- * @date 2023-12-25
+ * @date 2024-01-04
  */
-public class Salesorderdetails extends BaseEntity {
+public class Salesorderdetails extends BaseEntity
+{
     private static final long serialVersionUID = 1L;
 
-    /**
-     * 主键id
-     */
-    @Excel(name = "主键id")
+    /** 主键id */
     private Long salesorderdetailsId;
 
-    /**
-     * 订单编号 销售订单的外键
-     */
+    /** 订单编号 销售订单的外键 */
     @Excel(name = "订单编号 销售订单的外键")
     private String oId;
 
-    /**
-     * 水果编号 水果价格表的外键
-     */
+    /** 水果编号 水果价格表的外键 */
     @Excel(name = "水果编号 水果价格表的外键")
     private String fruitpriceId;
 
-    /**
-     * 数量 购买水果的数量
-     */
+    /** 重量 购买水果的重量 */
     @Excel(name = "重量 购买水果的重量")
     private BigDecimal count;
 
-    /**
-     * 单品金额 水果单价
-     */
+    /** 单品金额 水果单价 */
     @Excel(name = "单品金额 水果单价")
     private BigDecimal money;
 
-    /**
-     * 金额 数量X单价
-     */
+    /** 金额 数量X单价 */
     @Excel(name = "金额 数量X单价")
     private BigDecimal totalmoney;
 
-    /**
-     * 消费时间 购买时间
-     */
+    /** 消费时间 购买时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "消费时间 购买时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date datetime;
 
-    /**
-     * 乐观锁
-     */
+    /** 乐观锁 */
     @Excel(name = "乐观锁")
     private Long REVISION;
 
-    /**
-     * 创建人
-     */
+    /** 创建人 */
     @Excel(name = "创建人")
     private String createdBy;
 
-    /**
-     * 创建时间
-     */
+    /** 创建时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "创建时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date createdTime;
 
-    /**
-     * 更新人
-     */
+    /** 更新人 */
     @Excel(name = "更新人")
     private String updatedBy;
 
-    /**
-     * 更新时间
-     */
+    /** 更新时间 */
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Excel(name = "更新时间", width = 30, dateFormat = "yyyy-MM-dd")
     private Date updatedTime;
 
-    /**
-     * 门店编号 门店外键
-     */
+    /** 状态 */
+    @Excel(name = "状态")
+    private Long isStatus;
+
+    /** 门店编号 */
+    @Excel(name = "门店编号")
     private String sId;
 
-    public Long getSalesorderdetailsId() {
-        return salesorderdetailsId;
-    }
 
-    public void setSalesorderdetailsId(Long salesorderdetailsId) {
+    public Salesorderdetails(Long salesorderdetailsId, String updatedBy, Date updatedTime) {
         this.salesorderdetailsId = salesorderdetailsId;
+        this.updatedBy = updatedBy;
+        this.updatedTime = updatedTime;
     }
 
-    public String getoId() {
-        return oId;
+    public Salesorderdetails() {
     }
 
-    public void setoId(String oId) {
+    private Fruits fruits;
+
+    public Fruits getFruits() {
+        return fruits;
+    }
+
+    public void setFruits(Fruits fruits) {
+        this.fruits = fruits;
+    }
+
+    public Salesorderdetails(String oId) {
         this.oId = oId;
     }
 
-    public String getFruitpriceId() {
-        return fruitpriceId;
+
+    public void setSalesorderdetailsId(Long salesorderdetailsId) 
+    {
+        this.salesorderdetailsId = salesorderdetailsId;
     }
 
-    public void setFruitpriceId(String fruitpriceId) {
+    public Long getSalesorderdetailsId() 
+    {
+        return salesorderdetailsId;
+    }
+    public void setoId(String oId) 
+    {
+        this.oId = oId;
+    }
+
+    public String getoId() 
+    {
+        return oId;
+    }
+    public void setFruitpriceId(String fruitpriceId) 
+    {
         this.fruitpriceId = fruitpriceId;
     }
 
-    public BigDecimal getCount() {
-        return count;
+    public String getFruitpriceId() 
+    {
+        return fruitpriceId;
     }
-
-    public void setCount(BigDecimal count) {
+    public void setCount(BigDecimal count) 
+    {
         this.count = count;
     }
 
-    public BigDecimal getMoney() {
-        return money;
+    public BigDecimal getCount() 
+    {
+        return count;
+    }
+    public void setMoney(BigDecimal money) 
+    {
+        this.money = money;
     }
 
-    public void setMoney(BigDecimal money) {
-        this.money = money;
+    public BigDecimal getMoney() 
+    {
+        return money;
     }
 
     public BigDecimal getTotalmoney() {
@@ -144,97 +156,96 @@ public class Salesorderdetails extends BaseEntity {
         this.totalmoney = totalmoney;
     }
 
-    public Date getDatetime() {
-        return datetime;
-    }
-
-    public void setDatetime(Date datetime) {
+    public void setDatetime(Date datetime)
+    {
         this.datetime = datetime;
     }
 
-    public Long getREVISION() {
-        return REVISION;
+    public Date getDatetime() 
+    {
+        return datetime;
     }
-
-    public void setREVISION(Long REVISION) {
+    public void setREVISION(Long REVISION) 
+    {
         this.REVISION = REVISION;
     }
 
-    public String getCreatedBy() {
-        return createdBy;
+    public Long getREVISION() 
+    {
+        return REVISION;
     }
-
-    public void setCreatedBy(String createdBy) {
+    public void setCreatedBy(String createdBy) 
+    {
         this.createdBy = createdBy;
     }
 
-    public Date getCreatedTime() {
-        return createdTime;
+    public String getCreatedBy() 
+    {
+        return createdBy;
     }
-
-    public void setCreatedTime(Date createdTime) {
+    public void setCreatedTime(Date createdTime) 
+    {
         this.createdTime = createdTime;
     }
 
-    public String getUpdatedBy() {
-        return updatedBy;
+    public Date getCreatedTime() 
+    {
+        return createdTime;
     }
-
-    public void setUpdatedBy(String updatedBy) {
+    public void setUpdatedBy(String updatedBy) 
+    {
         this.updatedBy = updatedBy;
     }
 
-    public Date getUpdatedTime() {
-        return updatedTime;
+    public String getUpdatedBy() 
+    {
+        return updatedBy;
     }
-
-    public void setUpdatedTime(Date updatedTime) {
+    public void setUpdatedTime(Date updatedTime) 
+    {
         this.updatedTime = updatedTime;
     }
 
-    public String getsId() {
-        return sId;
+    public Date getUpdatedTime() 
+    {
+        return updatedTime;
+    }
+    public void setIsStatus(Long isStatus) 
+    {
+        this.isStatus = isStatus;
     }
 
-    public void setsId(String sId) {
+    public Long getIsStatus() 
+    {
+        return isStatus;
+    }
+    public void setsId(String sId) 
+    {
         this.sId = sId;
+    }
+
+    public String getsId() 
+    {
+        return sId;
     }
 
     @Override
     public String toString() {
-        return "Salesorderdetails{" +
-                "salesorderdetailsId=" + salesorderdetailsId +
-                ", oId='" + oId + '\'' +
-                ", fruitpriceId='" + fruitpriceId + '\'' +
-                ", count=" + count +
-                ", money=" + money +
-                ", totalmoney=" + totalmoney +
-                ", datetime=" + datetime +
-                ", REVISION=" + REVISION +
-                ", createdBy='" + createdBy + '\'' +
-                ", createdTime=" + createdTime +
-                ", updatedBy='" + updatedBy + '\'' +
-                ", updatedTime=" + updatedTime +
-                ", sId='" + sId + '\'' +
-                '}';
-    }
-
-    public Salesorderdetails(Long salesorderdetailsId, String oId, String fruitpriceId, BigDecimal count, BigDecimal money, BigDecimal totalmoney, Date datetime, Long REVISION, String createdBy, Date createdTime, String updatedBy, Date updatedTime, String sId) {
-        this.salesorderdetailsId = salesorderdetailsId;
-        this.oId = oId;
-        this.fruitpriceId = fruitpriceId;
-        this.count = count;
-        this.money = money;
-        this.totalmoney = totalmoney;
-        this.datetime = datetime;
-        this.REVISION = REVISION;
-        this.createdBy = createdBy;
-        this.createdTime = createdTime;
-        this.updatedBy = updatedBy;
-        this.updatedTime = updatedTime;
-        this.sId = sId;
-    }
-
-    public Salesorderdetails() {
+        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
+            .append("salesorderdetailsId", getSalesorderdetailsId())
+            .append("oId", getoId())
+            .append("fruitpriceId", getFruitpriceId())
+            .append("count", getCount())
+            .append("money", getMoney())
+            .append("totalmoney", getTotalmoney())
+            .append("datetime", getDatetime())
+            .append("REVISION", getREVISION())
+            .append("createdBy", getCreatedBy())
+            .append("createdTime", getCreatedTime())
+            .append("updatedBy", getUpdatedBy())
+            .append("updatedTime", getUpdatedTime())
+            .append("isStatus", getIsStatus())
+            .append("sId", getsId())
+            .toString();
     }
 }

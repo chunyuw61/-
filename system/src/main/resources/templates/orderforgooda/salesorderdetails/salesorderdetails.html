@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
 <head>
     <th:block th:include="include :: header('销售订单明细列表')"/>
 </head>
@@ -102,7 +102,7 @@
                 <label for="commodityType" class="col-sm-2 control-label">水果类型:</label>
                 <div class="col-sm-10">
                     <select id="commodityType" class="form-control" required>
-                        <option disabled selected>请先选择门店</option>
+                        <option disabled selected>请选择水果类型</option>
                     </select>
                 </div>
             </div>
@@ -111,7 +111,7 @@
                 <label for="commodityType1" class="col-sm-2 control-label">水果:</label>
                 <div class="col-sm-10">
                     <select id="commodityType1" class="form-control" required>
-                        <option disabled selected>请先选择水果类型</option>
+                        <option disabled selected>请选择水果</option>
                     </select>
                 </div>
             </div>
@@ -130,11 +130,9 @@
             <div class="form-group">
                 <div class="col-sm-offset-2 col-sm-10">
                     <button type="button" class="btn btn-primary" id="saveButton">保存</button>
-                    <button type="button" class="btn btn-danger" style="margin-left: 10px">取消</button>
                 </div>
             </div>
         </form>
-
         <table id="fruitTable" class="table table-striped table-bordered table-hover table-condensed text-center">
             <tr>
                 <th>水果类型</th>
@@ -146,35 +144,55 @@
                 <th>操作</th>
             </tr>
         </table>
-
         <div id="totalAmount" class="alert alert-info" role="alert"></div>
-        <button id="payButton" class="btn btn-success">支付</button>
+        <button id="alipay" class="btn btn-primary">付款</button>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">
+            再次查看二维码
+        </button>
+    </div>
+</div>
+
+<!-- 模态框 -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">模态框标题</h4>
+            </div>
+            <div class="modal-body">
+                <!-- 在这里插入图片 -->
+                <img src="图片路径" alt="请支付">
+            </div>
+        </div>
+        >
     </div>
 </div>
 </body>
 <script>
+    let number = 0;
+    //添加计数器计算商品数量
+    let sum = 0;
     $(document).ready(function () {
         // 模块一：加载商店
         function loadShops() {
             $.ajax({
-                url: "http://localhost:80/shop/list",
+                url: "http://localhost:80/shop/list1",
                 dataType: "json",
                 type: "get",
                 success: function (resp) {
+                    $("#shop").empty(); // 清空下拉框
+                    $("<option disabled selected></option>").html("请选择门店").appendTo("#shop"); // 添加"请选择门店"选项
                     for (let i = 0; i < resp.length; i++) {
                         let store = resp[i];
                         $("<option></option>").val(store.sNumber).html(store.sName).appendTo("#shop");
                     }
                 },
                 error: function (xhr, type, errorThrown) {
-                    console.log('XMLHttpRequest对象:', xhr);
-                    console.log('错误类型:', type);
-                    console.log('错误描述:', errorThrown);
                     alert("请求失败");
                 }
             });
         }
-
         // 模块二：选择类型
         function selectType() {
             let type = $("#shop option:selected");
@@ -186,19 +204,14 @@
                 data: {"shopId": type.val()},
                 success: function (resp) {
                     console.log(resp)
-                    $("#commodityType").empty();
-                    if (resp.length !== 0) {
-                        $("<option disabled></option>").html("请选择水果类型").appendTo("#commodityType");
-                        for (let i = 0; i < resp.length; i++) {
-                            let fruits = resp[i];
-                            console.log(fruits.code);
-                            console.log(fruits.name)
-                            $("<option></option>").val(fruits.code).html(fruits.name).appendTo("#commodityType");
-                        }
-                    } else {
-                        $("<option disabled></option>").html("无").appendTo("#commodityType");
+                    $("#commodityType").empty(); // 清空下拉框
+                    $("<option disabled selected></option>").html("请选择水果类型").appendTo("#commodityType"); // 添加"请选择水果类型"选项
+                    for (let i = 0; i < resp.length; i++) {
+                        let fruits = resp[i];
+                        console.log(fruits.code);
+                        console.log(fruits.name)
+                        $("<option></option>").val(fruits.code).html(fruits.name).appendTo("#commodityType");
                     }
-
                 },
                 error: function (xhr, type, errorThrown) {
                     alert("请求失败");
@@ -206,26 +219,47 @@
             });
         }
 
-        // 模块三：发送请求
+        // 模块三：选择水果
         function sendRequest() {
             let code = $("#commodityType").val();
             console.log(code);
             $.ajax({
-                url: "http://localhost:80/inventory/fruits/inquireByFruittypesId",
+                url: "http://localhost:80/Fruits/inquireByFruittypesId",
                 dataType: "json",
                 type: "post",
                 data: {"fruittypesId": code},
                 success: function (resp) {
                     console.log(resp)
-                    $("#commodityType1").empty();
                     if (resp) {
-                        $("<option disabled></option>").html("请选择水果").appendTo("#commodityType1");
+                        $("#commodityType1").empty(); // 清空下拉框
                         for (let i = 0; i < resp.length; i++) {
                             let fruits = resp[i];
-                            $("<option></option>").val(fruits.code).html(fruits.name).appendTo("#commodityType1");
+                            //查询库存
+                            $.ajax({
+                                url: "http://localhost:80/Fruits/number",
+                                dataType: "json",
+                                type: "post",
+                                contentType: "application/json",
+                                data: JSON.stringify({
+                                    "fruittypesId": code,
+                                    "fruitId": fruits.code
+                                }),
+                                success: function (resp) {
+                                    if (resp > 0) {
+                                        $("<option></option>")
+                                            .val(fruits.code)
+                                            .html(fruits.name)
+                                            .data('stock', resp)
+                                            .appendTo("#commodityType1");
+                                        number = resp;
+                                    } else {
+                                        console.log("库存不足")
+                                    }
+                                }
+                            });
                         }
                     } else {
-                        console.log('resp is undefined');
+                        console.log('查询失败');
                     }
                 },
                 error: function (xhr, type, errorThrown) {
@@ -233,23 +267,22 @@
                 }
             });
         }
-
-        // 调用模块
         loadShops();
-
         $("#shop").change(function () {
-            $("#commodityType1").empty();
-            $("<option disabled></option>").html("请先选择水果类型").appendTo("#commodityType1");
+            let selectedShop = $("#shop option:selected").text();
+            $("#shop").hide();
+            $("<div></div>").text(selectedShop).insertAfter("#shop");
             selectType();
         });
-
         $("#commodityType").change(function () {
             sendRequest();
         });
     });
 
-</script>
-<script>
+    let stock = $('#commodityType1 option:selected').data('stock');
+    console.log(name, stock);
+
+
     let totalAmountValue; // 声明全局变量
     document.getElementById('saveButton').addEventListener('click', function () {
         let type = $("#commodityType option:selected");
@@ -257,18 +290,18 @@
         console.log(typeVal);
         console.log(type.text());
         console.log(type);
-
         let fruit = $("#commodityType1 option:selected");
         let fruitVal = fruit.val();
         var quantity = document.getElementById('commodityDescription').value;
 
         // 检查这三个值是否都存在
         if (type.text() && fruit.text() && quantity) {
-
+            var i = $("#shop option:selected").val();
             $.ajax({
-                url: 'http://localhost:80/priceFruitPrice/getPriceByCode',
+                url: 'http://localhost:80/fruitPrice/getPriceByCode',
                 type: 'GET',
                 data: {
+                    "sNumber": i,
                     code: fruitVal
                 },
                 success: function (data) {
@@ -282,13 +315,13 @@
                             // 如果存在，更新重量和总价
                             var oldQuantity = parseFloat($(this).find("td").eq(3).text());
                             var newQuantity = oldQuantity + parseFloat(quantity);
+                            stock = stock - quantity;
                             $(this).find("td").eq(3).text(newQuantity.toFixed(2)); // 使用toFixed(2)来保留两位小数
                             $(this).find("td").eq(5).text((price * newQuantity).toFixed(2));
                             found = true;
+                            sum = sum + 1;
                         }
                     });
-
-
                     if (!found) {
                         // 如果不存在，添加新的一行
                         var row = table.insertRow(-1);
@@ -296,6 +329,7 @@
                         row.insertCell(1).innerHTML = fruitVal; // 水果编号
                         row.insertCell(2).innerHTML = fruit.text(); // 水果名称
                         row.insertCell(3).innerHTML = quantity; //重量
+                        stock = stock - quantity;
                         row.insertCell(4).innerHTML = price; // 单价
                         row.insertCell(5).innerHTML = ((price * 2) * quantity).toFixed(2); // 总价
                         var deleteButton = document.createElement('button');
@@ -303,6 +337,7 @@
                         deleteButton.addEventListener('click', function () {
                             table.deleteRow(row.rowIndex);
                             calculateTotalAmount(); // 在删除表格行后，重新计算总金额
+                            sum = sum + 1;
                         });
                         row.insertCell(6).appendChild(deleteButton); // 操作
                     }
@@ -334,53 +369,125 @@
         document.getElementById('totalAmount').innerHTML = "总金额: " + totalAmountValue;
     }
 
+    /*---------------------------------------------------------------------------------------------*/
+    //设置全局变量用来存储订单号
+    let globalOrderNumber;
+    //点击确定生成支付二维码
+    document.getElementById('alipay').addEventListener('click', function () {
+        //店名
+        var shopName = $("#shop").val();
+        console.log(shopName);
+        //获取总金额
+        calculateTotalAmount();
+        var quantity = document.getElementById('totalAmount').innerHTML.split(": ")[1];
+        //商品数量
+        var sum = document.getElementById('fruitTable').rows.length - 1;
+        // 创建一个对象来存储你想要发送的数据
+        var paymentInfo = {
+            shopName: shopName,
+            quantity: quantity,
+            sum: sum,
+        };
 
-    // 添加支付按钮的点击事件
-    document.getElementById('payButton').addEventListener('click', function () {
-        // 创建一个数组来存储所有的水果数据
-        var fruits = [];
-        var i = $("#shop option:selected").val();
-        console.log("店名",i)
-        // 遍历表格的每一行，获取每个水果的数据
-        $("#fruitTable tr").each(function (index) {
-            // 跳过表头
-            if (index === 0) return;
-            var fruit = {};
-            fruit.fruitpriceId = $(this).find("td").eq(1).text(); // 水果编号
-            fruit.count = $(this).find("td").eq(3).text(); // 重量
-            fruit.money = $(this).find("td").eq(4).text(); // 单价
-            fruit.totalmoney = totalAmountValue; // 总价
-            fruit.sId = i;
-            fruits.push(fruit);
-        });
+        console.log(shopName, sum, quantity)
+        $.ajax({
+            url: 'http://localhost:80/salesorderdetails/alipay',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify(paymentInfo),
+            success: function (response) {
+                console.log('成功: ', response);
 
-        fruits.forEach(function(fruit) {
-            console.log("==============", fruit.sId);
-        });
-        console.log(JSON.stringify(fruits))
-        if (fruits.length > 0){
-            $.ajax({
-                url: 'http://localhost:80/salesorderdetails/insert', // 你的后端接口地址
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(fruits), // 将水果数据转换为JSON格式
+                // 检查响应数据中的第二个元素是否为"异常"
+                if (response[1] === "异常") {
+                    // 如果出现异常，显示一个弹窗
+                    alert("支付失败");
+                } else {
+                    // 如果没有出现异常，显示模态框
+                    var orderNumber = response[0];
+                    var base64Image = response[1];
 
-                success: function (response) {
-                    console.log('成功: ', response);
-                    alert("成功");
-                    location.reload();
-                },
-                error: function (error) {
-                    console.log('发生错误: ', error);
-                    location.reload();
+                    // 在模态框中显示订单号和图片
+                    $('#myModal .modal-body').html('<img src="data:image/png;base64,' + base64Image + '" alt="Image" />');
+                    console.log("Base64 图片", base64Image)
+
+                    $('#myModal .modal-title').text("订单号: " + orderNumber);
+                    globalOrderNumber = orderNumber;
+                    $('#myModal').modal('show');
                 }
-            });
-        }else {
-            alert("没有订单");
-            location.reload();
-        }
+            },
+            error: function (error) {
+                console.log('发生错误: ', error);
+                location.reload();
+            }
+        });
+
     });
+    /*------------------------------------------------------------------------------------*/
+    //查询订单支付状态
+    // 当模态框隐藏后
+    $('#myModal').on('hidden.bs.modal', function () {
+        //查看订单是否支付成功
+        var numberPart = globalOrderNumber.replace(/\D/g, '');  // 移除所有非数字字符
+        console.log("订单号", numberPart)
+        $.ajax({
+            url: 'http://localhost:80/salesorderdetails/selectalipay', // 你的后端接口地址
+            type: 'POST',
+            data: {
+                numberPart: numberPart,
+            }, // 将水果数据转换为JSON格式
 
-
+            success: function (response) {
+                console.log('*******************************', response);
+                if (response === "支付成功") {
+                    alert("支付成功");
+                    /***********************************************************************************/
+                    //更新数据
+                    // 创建一个数组来存储所有的水果数据
+                    var fruits = [];
+                    var i = $("#shop option:selected").val();
+                    console.log("店名", i)
+                    // 遍历表格的每一行，获取每个水果的数据
+                    $("#fruitTable tr").each(function (index) {
+                        // 跳过表头
+                        if (index === 0) return;
+                        var fruit = {};
+                        fruit.fruitpriceId = $(this).find("td").eq(1).text(); // 水果编号
+                        fruit.count = $(this).find("td").eq(3).text(); // 重量
+                        fruit.money = $(this).find("td").eq(4).text(); // 单价
+                        fruit.totalmoney = totalAmountValue; // 总价
+                        fruit.sId = i;
+                        fruits.push(fruit);
+                    });
+                    fruits.forEach(function (fruit) {
+                        console.log("==============", fruit.sId);
+                    });
+                    console.log(JSON.stringify(fruits))
+                    if (fruits.length > 0) {
+                        $.ajax({
+                            url: 'http://localhost:80/salesorderdetails/insert', // 你的后端接口地址
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify(fruits), // 将水果数据转换为JSON格式
+                            success: function (response) {
+                                console.log('后台操作成功: ', response);
+                            },
+                            error: function (error) {
+                                console.log('发生错误: ', error);
+                            }
+                        });
+                    } else {
+                        alert("没有订单");
+                    }
+                    location.reload();
+                } else {
+                    alert(response);
+                }
+            },
+            error: function (error) {
+                console.log('发生错误: ', error);
+            }
+        });
+    });
 </script>
 </html>

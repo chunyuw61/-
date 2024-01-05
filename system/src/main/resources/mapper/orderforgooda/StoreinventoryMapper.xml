@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.guoran.orderforgoods.mapper.OrderStoreinventoryMapper">
+
+    <resultMap type="OrderStoreinventory" id="StoreinventoryResult">
+        <result property="inentorydetailsId"    column="InentoryDetails_id"    />
+        <result property="shopId"    column="shop_id"    />
+        <result property="fruittypesId"    column="fruittypes_id"    />
+        <result property="fruitId"    column="fruit_id"    />
+        <result property="number"    column="number"    />
+        <result property="isStatus"    column="is_status"    />
+        <result property="REVISION"    column="REVISION"    />
+        <result property="createdBy"    column="CREATED_BY"    />
+        <result property="createdTime"    column="CREATED_TIME"    />
+        <result property="updatedBy"    column="UPDATED_BY"    />
+        <result property="updatedTime"    column="UPDATED_TIME"    />
+    </resultMap>
+
+    <sql id="selectStoreinventoryVo">
+        select InentoryDetails_id, shop_id, fruittypes_id, fruit_id, number, is_status, REVISION, CREATED_BY, CREATED_TIME, UPDATED_BY, UPDATED_TIME from storeinventory
+    </sql>
+
+    <select id="selectStoreinventoryList" parameterType="OrderStoreinventory" resultMap="StoreinventoryResult">
+        <include refid="selectStoreinventoryVo"/>
+        <where>
+            <if test="shopId != null  and shopId != ''"> and shop_id = #{shopId}</if>
+            <if test="fruittypesId != null  and fruittypesId != ''"> and fruittypes_id = #{fruittypesId}</if>
+            <if test="fruitId != null  and fruitId != ''"> and fruit_id = #{fruitId}</if>
+            <if test="number != null "> and number = #{number}</if>
+            <if test="isStatus != null "> and is_status = #{isStatus}</if>
+        </where>
+    </select>
+
+    <select id="selectStoreinventoryByInentorydetailsId" parameterType="Long" resultMap="StoreinventoryResult">
+        <include refid="selectStoreinventoryVo"/>
+        where InentoryDetails_id = #{inentorydetailsId}
+    </select>
+
+    <!--查询库存重量-->
+    <select id="selectNumberByFruitIdAndFruittypesId" parameterType="OrderStoreinventory" resultType="java.math.BigDecimal">
+        select number from storeinventory
+        <where>
+            <if test="fruitId != null  and fruitId != ''"> and fruit_id = #{fruitId}</if>
+            <if test="fruittypesId != null  and fruittypesId != ''"> and fruittypes_id = #{fruittypesId}</if>
+        </where>
+    </select>
+
+    <insert id="insertStoreinventory" parameterType="OrderStoreinventory" useGeneratedKeys="true" keyProperty="inentorydetailsId">
+        insert into storeinventory
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="shopId != null and shopId != ''">shop_id,</if>
+            <if test="fruittypesId != null and fruittypesId != ''">fruittypes_id,</if>
+            <if test="fruitId != null and fruitId != ''">fruit_id,</if>
+            <if test="number != null">number,</if>
+            <if test="isStatus != null">is_status,</if>
+            <if test="REVISION != null">REVISION,</if>
+            <if test="createdBy != null">CREATED_BY,</if>
+            <if test="createdTime != null">CREATED_TIME,</if>
+            <if test="updatedBy != null">UPDATED_BY,</if>
+            <if test="updatedTime != null">UPDATED_TIME,</if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="shopId != null and shopId != ''">#{shopId},</if>
+            <if test="fruittypesId != null and fruittypesId != ''">#{fruittypesId},</if>
+            <if test="fruitId != null and fruitId != ''">#{fruitId},</if>
+            <if test="number != null">#{number},</if>
+            <if test="isStatus != null">#{isStatus},</if>
+            <if test="REVISION != null">#{REVISION},</if>
+            <if test="createdBy != null">#{createdBy},</if>
+            <if test="createdTime != null">#{createdTime},</if>
+            <if test="updatedBy != null">#{updatedBy},</if>
+            <if test="updatedTime != null">#{updatedTime},</if>
+        </trim>
+    </insert>
+
+    <update id="updateStoreinventory" parameterType="OrderStoreinventory">
+        update storeinventory
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="shopId != null and shopId != ''">shop_id = #{shopId},</if>
+            <if test="fruittypesId != null and fruittypesId != ''">fruittypes_id = #{fruittypesId},</if>
+            <if test="fruitId != null and fruitId != ''">fruit_id = #{fruitId},</if>
+            <if test="number != null">number = #{number},</if>
+            <if test="isStatus != null">is_status = #{isStatus},</if>
+            <if test="REVISION != null">REVISION = #{REVISION},</if>
+            <if test="createdBy != null">CREATED_BY = #{createdBy},</if>
+            <if test="createdTime != null">CREATED_TIME = #{createdTime},</if>
+            <if test="updatedBy != null">UPDATED_BY = #{updatedBy},</if>
+            <if test="updatedTime != null">UPDATED_TIME = #{updatedTime},</if>
+        </trim>
+        where InentoryDetails_id = #{inentorydetailsId}
+    </update>
+
+    <delete id="deleteStoreinventoryByInentorydetailsId" parameterType="Long">
+        delete from OrderStoreinventory where InentoryDetails_id = #{inentorydetailsId}
+    </delete>
+
+    <delete id="deleteStoreinventoryByInentorydetailsIds" parameterType="String">
+        delete from OrderStoreinventory where InentoryDetails_id in
+        <foreach item="inentorydetailsId" collection="array" open="(" separator="," close=")">
+            #{inentorydetailsId}
+        </foreach>
+    </delete>
+
+</mapper>
