@@ -2,6 +2,7 @@
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
     <th:block th:include="include :: header('水果列表')" />
+    <script src="https://s3.pstatp.com/cdn/expire-1-M/jquery/3.3.1/jquery.min.js"></script>
 </head>
 <body class="gray-bg">
      <div class="container-div">
@@ -12,7 +13,11 @@
                         <ul>
                             <li>
                                 <label>水果种类编号：</label>
-                                <input type="text" name="fruittypesId"/>
+                                <input type="text" id="fruittypesId" name="fruittypesId"/>
+                            </li>
+                            <li>
+                                <label>水果种类名称：</label>
+                                <input type="text" id="fruittypesName" name="fruittypesName"/>
                             </li>
                             <li>
                                 <label>水果编号：</label>
@@ -153,18 +158,76 @@
         });
     </script>
 
+<!--  根据水果种类名称查询水果种类编号  -->
+    <script>
+        $(document).ready(function () {
+            $("#fruittypesName").on('input', function () {
+                var fruittypesName = $(this).val();
+                if (fruittypesName) {
+                    selectFruitTypeIdByFruitTypeName(fruittypesName);
+                } else {
+                    $("#fruittypesId").val(""); // 如果输入框为空就清空水果种类编号输入框
+                }
+            })
+        })
+        function selectFruitTypeIdByFruitTypeName(fruittypesName) {
+            $.ajax({
+                url: "/inventory/fruits/selectFruitTypeId",
+                dataType: "json",
+                data: {
+                    "name": fruittypesName
+                },
+                type: "post",
+                success: function (resp) {
+                    if (resp.fruitTypeId != null && resp.fruitTypeId !== "") {
+                        $("#fruittypesId").val(resp.fruitTypeId);
+                    } else {
+                        $("#fruittypesId").val(""); // 如果查不到就清空水果种类编号输入框
+                    }
+                },
+                error:function(xhr,type,errorThrown){
+                    console.log('XMLHttpRequest 对象:',xhr);
+                    console.log('错误类型:', type);
+                    console.log('错误描述:', errorThrown);
+                    $.modal.alertError("请求失败");
+                }
+            })
+        }
+    </script>
+
+<!--  根据水果种类编号查询水果种类名称  -->
      <script>
+
+         $(document).ready(function () {
+             $("#fruittypesId").on('input', function () {
+                 var fruittypesId = $(this).val();
+                 if (fruittypesId) {
+                     selectFruitTypeNameByFruitTypeId(fruittypesId);
+                 } else {
+                     $("#fruittypesName").val(""); // 如果输入框为空就清空水果种类编号输入框
+                 }
+             })
+         })
+
          // 根据水果种类编号查询水果种类名称
          function selectFruitTypeNameByFruitTypeId(fruittypesId, index) {
              $.ajax({
-                 url: "/inventory/storeinventory/selectFruitTypeName",
+                 url: "/inventory/fruits/selectFruitTypeName",
                  dataType: "json",
                  data: {
                      "code": fruittypesId
                  },
                  type: "post",
                  success: function (resp) {
-                     $("#fruitTypeNameSpan" + index).html(resp.fruitTypeName)
+                     if (index != null) {
+                         $("#fruitTypeNameSpan" + index).html(resp.fruitTypeName);
+                     } else {
+                         if (resp.fruitTypeName != null && resp.fruitTypeName !== "") {
+                             $("#fruittypesName").val(resp.fruitTypeName);
+                         } else {
+                             $("#fruittypesName").val(""); // 如果查不到就清空水果种类名称输入框
+                         }
+                     }
                  },
                  error:function(xhr,type,errorThrown){
                      console.log('XMLHttpRequest 对象:',xhr);

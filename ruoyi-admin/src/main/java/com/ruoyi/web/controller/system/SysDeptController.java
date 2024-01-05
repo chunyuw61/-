@@ -88,17 +88,18 @@ public class SysDeptController extends BaseController
         String ancestors = dept.getAncestors();
         Integer sunmber = deptService.selectID(parentId, deptName, ancestors);
         System.out.println(sunmber);
-        if (parentId == 200) {
+        String lastTwoChars = deptName.substring(deptName.length() - 2); // 获取部门名称的最后两个字符
+        String lastOneChars = deptName.substring(deptName.length() - 1); // 获取部门名称的最后一个字符
+        String[] parts = ancestors.split(","); // 拆解祖级列表, 获得新字符串集合
+        int ancestorsLength = parts.length; // 转变为菜单级别
+        if (lastOneChars.equals("店") && ancestorsLength == 4) {
             deptService.insertshop(String.valueOf(sunmber),deptName);
         }
-        if (parentId == 201) {
+        if (lastTwoChars.equals("仓库") && ancestorsLength == 4) {
             deptService.insertCK(String.valueOf(sunmber), deptName);
         }
 
-
-
         System.out.println(i);
-
 
         dept.setCreateBy(getLoginName());
         return toAjax(i);

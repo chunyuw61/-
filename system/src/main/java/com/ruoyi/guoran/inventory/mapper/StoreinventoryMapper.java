@@ -2,9 +2,10 @@ package com.ruoyi.guoran.inventory.mapper;
 
 import java.util.List;
 
-import com.ruoyi.guoran.domain.Shop;
+import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.guoran.domain.Storeinventory;
 import com.ruoyi.guoran.domain.Warehouse;
+import com.ruoyi.guoran.domain.Shop;
 import com.ruoyi.guoran.domain.Warehousestock;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -50,7 +51,12 @@ public interface StoreinventoryMapper
     public String selectFruitTypeName(String code);
 
     /**
-     *  根据水果编号查询水果名称
+     *  根据水果名称 查询水果编号
+     */
+    public String selectFruitIdByFruitName(String name);
+
+    /**
+     *  根据水果编号 查询水果名称
      */
     public String selectFruitName(String code);
 
@@ -70,9 +76,9 @@ public interface StoreinventoryMapper
     public List<Shop> selectShopId();
 
     /**
-     * 根据登录门店的父级菜单id,去查询父级菜单的父级菜单的id
+     * 根据登录门店的菜单列表id,去查询配货仓库的部门id 和 部门名称
      */
-    public int selectParentIdByParentId(int parentId);
+    public SysDept selectWareAncestorsByShopAncestors(SysDept sysDept);
 
     /**
      * 新增门店库存

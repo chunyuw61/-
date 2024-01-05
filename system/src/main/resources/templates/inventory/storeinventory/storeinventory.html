@@ -10,17 +10,29 @@
                 <form id="formId">
                     <div class="select-list">
                         <ul>
-                            <li shiro:hasRole="admin">
+                            <li shiro:lacksRole="StoreManager">
                                 <label>门店编号：</label>
-                                <input type="text" name="shopId"/>
+                                <input type="text" id="shopId" name="shopId"/>
+                            </li>
+                            <li shiro:lacksRole="StoreManager">
+                                <label>门店名称：</label>
+                                <input type="text" id="shopName" name="shopName"/>
                             </li>
                             <li>
                                 <label>水果种类编号：</label>
-                                <input type="text" name="fruittypesId"/>
+                                <input type="text" id="fruittypesId" name="fruittypesId"/>
+                            </li>
+                            <li>
+                                <label>水果种类名称：</label>
+                                <input type="text" id="fruittypesName" name="fruittypesName"/>
                             </li>
                             <li>
                                 <label>水果编号：</label>
-                                <input type="text" name="fruitId"/>
+                                <input type="text" id="fruitId" name="fruitId"/>
+                            </li>
+                            <li>
+                                <label>水果名称：</label>
+                                <input type="text" id="fruitName" name="fruitName"/>
                             </li>
                             <li>
                                 <label>状态：</label>
@@ -165,28 +177,139 @@
         });
     </script>
 
-<!--  向表格中插入门店名称和水果种类名称  -->
+     <!--  根据门店名称查询门店编号  -->
+     <script>
+         // 监测门店名称输入框
+         $(document).ready(function () {
+             $("#shopName").on('input', function () {
+                 var shopName = $(this).val();
+                 if (shopName) {
+                     selectShopIdByShopName(shopName);
+                 } else {
+                     $("#shopId").val(""); // 如果输入框为空就清空门店编号输入框
+                 }
+             })
+         })
+
+         function selectShopIdByShopName(shopName) {
+             $.ajax({
+                 url: "/inventory/purchaseorderdetails/selectShopId",
+                 dataType: "json",
+                 data: {
+                     "sName": shopName
+                 },
+                 type: "post",
+                 success: function (resp) {
+                     if (resp.shopId != null && resp.shopId !== "") {
+                         $("#shopId").val(resp.shopId)
+                     } else {
+                         $("#shopId").val("") // 如果查不到就清空门店编号输入框
+                     }
+                 },
+                 error:function(xhr,type,errorThrown){
+                     console.log('XMLHttpRequest 对象:',xhr);
+                     console.log('错误类型:', type);
+                     console.log('错误描述:', errorThrown);
+                     $.modal.alertError("请求失败");
+                 }
+             })
+         }
+
+     </script>
+
+<!--  根据门店编号查询门店名称  -->
+     <script>
+         // 监测门店编号输入框
+         $(document).ready(function () {
+             $("#shopId").on('input', function () {
+                 var shopId = $(this).val();
+                 if (shopId) {
+                     selectShopNameByShopId(shopId);
+                 } else {
+                     $("#shopName").val(""); // 如果输入框为空就清空门店名称输入框
+                 }
+             })
+         })
+         // 根据门店编号查询门店名称
+         function selectShopNameByShopId(shopId, index) {
+             $.ajax({
+                 url: "/inventory/storeinventory/selectShopName",
+                 dataType: "json",
+                 data: {
+                     "sNumber": shopId
+                 },
+                 type: "post",
+                 success: function (resp) {
+                     if (index != null) {
+                         $("#shopNameSpan" + index).html(resp.shopName)
+                     } else {
+                         if (resp.shopName != null && resp.shopName !== "") {
+                             $("#shopName").val(resp.shopName)
+                         } else {
+                             $("#shopName").val("") // 如果查不到就清空门店名称输入框
+                         }
+                     }
+                 },
+                 error:function(xhr,type,errorThrown){
+                     console.log('XMLHttpRequest 对象:',xhr);
+                     console.log('错误类型:', type);
+                     console.log('错误描述:', errorThrown);
+                     $.modal.alertError("请求失败");
+                 }
+             })
+         }
+     </script>
+
+     <!--  根据水果种类名称查询水果种类编号  -->
+     <script>
+         $(document).ready(function () {
+             $("#fruittypesName").on('input', function () {
+                 var fruittypesName = $(this).val();
+                 if (fruittypesName) {
+                     selectFruitTypeIdByFruitTypeName(fruittypesName);
+                 } else {
+                     $("#fruittypesId").val(""); // 如果输入框为空就清空水果种类编号输入框
+                 }
+             })
+         })
+         function selectFruitTypeIdByFruitTypeName(fruittypesName) {
+             $.ajax({
+                 url: "/inventory/fruits/selectFruitTypeId",
+                 dataType: "json",
+                 data: {
+                     "name": fruittypesName
+                 },
+                 type: "post",
+                 success: function (resp) {
+                     if (resp.fruitTypeId != null && resp.fruitTypeId !== "") {
+                         $("#fruittypesId").val(resp.fruitTypeId);
+                     } else {
+                         $("#fruittypesId").val(""); // 如果查不到就清空水果种类编号输入框
+                     }
+                 },
+                 error:function(xhr,type,errorThrown){
+                     console.log('XMLHttpRequest 对象:',xhr);
+                     console.log('错误类型:', type);
+                     console.log('错误描述:', errorThrown);
+                     $.modal.alertError("请求失败");
+                 }
+             })
+         }
+     </script>
+
+     <!--  根据水果种类编号查询水果种类名称  -->
     <script>
-        // 根据门店编号查询门店名称
-        function selectShopNameByShopId(shopId, index) {
-            $.ajax({
-                url: "/inventory/storeinventory/selectShopName",
-                dataType: "json",
-                data: {
-                    "sNumber": shopId
-                },
-                type: "post",
-                success: function (resp) {
-                    $("#shopNameSpan" + index).html(resp.shopName)
-                },
-                error:function(xhr,type,errorThrown){
-                    console.log('XMLHttpRequest 对象:',xhr);
-                    console.log('错误类型:', type);
-                    console.log('错误描述:', errorThrown);
-                    $.modal.alertError("请求失败");
+        // 监测水果种类id输入框
+        $(document).ready(function () {
+            $("#fruittypesId").on('input', function () {
+                var fruittypesId = $(this).val();
+                if (fruittypesId) {
+                    selectFruitTypeNameByFruitTypeId(fruittypesId);
+                } else {
+                    $("#fruittypesName").val(""); // 如果输入框为空就清空水果种类名称输入框
                 }
             })
-        }
+        })
 
         // 根据水果种类编号查询水果种类名称
         function selectFruitTypeNameByFruitTypeId(fruittypesId, index) {
@@ -198,7 +321,15 @@
                 },
                 type: "post",
                 success: function (resp) {
-                    $("#fruitTypeNameSpan" + index).html(resp.fruitTypeName)
+                    if (index != null) {
+                        $("#fruitTypeNameSpan" + index).html(resp.fruitTypeName);
+                    } else {
+                        if (resp.fruitTypeName != null && resp.fruitTypeName !== "") {
+                            $("#fruittypesName").val(resp.fruitTypeName);
+                        } else {
+                            $("#fruittypesName").val(""); // 如果查不到就清空水果种类名称输入框
+                        }
+                    }
                 },
                 error:function(xhr,type,errorThrown){
                     console.log('XMLHttpRequest 对象:',xhr);
@@ -208,7 +339,60 @@
                 }
             })
         }
+    </script>
 
+<!--  根据水果名称 查询水果编号  -->
+     <script>
+         // 监测水果名称输入框
+         $(document).ready(function () {
+             $("#fruitName").on('input', function () {
+                 var fruitName = $(this).val();
+                 if (fruitName) {
+                     selectFruitIdByFruitName(fruitName);
+                 } else {
+                     $("#fruitId").val(""); // 如果输入框为空就清空水果编号输入框
+                 }
+             })
+         })
+         // 根据水果名称 查询水果编号
+         function selectFruitIdByFruitName(fruitName, index) {
+             $.ajax({
+                 url: "/inventory/storeinventory/selectFruitIdByFruitName",
+                 dataType: "json",
+                 data: {
+                     "name": fruitName
+                 },
+                 type: "post",
+                 success: function (resp) {
+                     if (resp.fruitId != null && resp.fruitId !== "") {
+                         $("#fruitId").val(resp.fruitId);
+                     } else {
+                         $("#fruitId").val(""); // 如果查不到就清空水果编号输入框
+                     }
+                 },
+                 error:function(xhr,type,errorThrown){
+                     console.log('XMLHttpRequest 对象:',xhr);
+                     console.log('错误类型:', type);
+                     console.log('错误描述:', errorThrown);
+                     $.modal.alertError("请求失败");
+                 }
+             })
+         }
+     </script>
+
+<!--  根据水果编号 查询水果名称  -->
+    <script>
+        // 监测水果编号输入框
+        $(document).ready(function () {
+            $("#fruitId").on('input', function () {
+                var fruitId = $(this).val();
+                if (fruitId) {
+                    selectFruitNameByFruitId(fruitId);
+                } else {
+                    $("#fruitName").val(""); // 如果输入框为空就清空水果名称输入框
+                }
+            })
+        })
         // 根据水果编号查询水果名称
         function selectFruitNameByFruitId(fruitId, index) {
             $.ajax({
@@ -219,7 +403,15 @@
                 },
                 type: "post",
                 success: function (resp) {
-                    $("#fruitNameSpan" + index).html(resp.fruitName)
+                    if (index != null) {
+                        $("#fruitNameSpan" + index).html(resp.fruitName)
+                    } else {
+                        if (resp.fruitName != null && resp.fruitName !== "") {
+                            $("#fruitName").val(resp.fruitName);
+                        } else {
+                            $("#fruitName").val(""); // 如果查不到就清空水果名称输入框
+                        }
+                    }
                 },
                 error:function(xhr,type,errorThrown){
                     console.log('XMLHttpRequest 对象:',xhr);
