@@ -90,9 +90,10 @@ public class StoreinventoryServiceImpl implements IStoreinventoryService
     }
 
     @Override
-    public List<Shop> selectShopId() {
-        return storeinventoryMapper.selectShopId();
+    public List<SysDept> selectShopIdByWareHouseId(SysDept sysDept) {
+        return storeinventoryMapper.selectShopIdByWareHouseId(sysDept);
     }
+
 
     @Override
     public SysDept selectWareAncestorsByShopAncestors(SysDept sysDept) {

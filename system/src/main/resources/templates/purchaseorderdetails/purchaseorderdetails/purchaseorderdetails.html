@@ -52,11 +52,11 @@
                                 <input type="text" name="fruitName"/>
                             </li>
                             <li>
-                                <label>数量：</label>
+                                <label>数量(kg)：</label>
                                 <input type="text" name="number"/>
                             </li>
                             <li>
-                                <label>进货单价：</label>
+                                <label>进货单价(元/500g)：</label>
                                 <input type="text" name="price"/>
                             </li>
                             <li>
@@ -68,21 +68,6 @@
                     </div>
                 </form>
             </div>
-
-            <div class="btn-group-sm" id="toolbar" role="group">
-                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="purchaseorderdetails:purchaseorderdetails:add">
-                    <i class="fa fa-plus"></i> 添加
-                </a>
-                <a class="btn btn-primary single disabled" onclick="$.operate.edit()" shiro:hasPermission="purchaseorderdetails:purchaseorderdetails:edit">
-                    <i class="fa fa-edit"></i> 修改
-                </a>
-                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="purchaseorderdetails:purchaseorderdetails:remove">
-                    <i class="fa fa-remove"></i> 删除
-                </a>
-                <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="purchaseorderdetails:purchaseorderdetails:export">
-                    <i class="fa fa-download"></i> 导出
-                </a>
-            </div>
             <div class="col-sm-12 select-table table-striped">
                 <table id="bootstrap-table"></table>
             </div>
@@ -90,6 +75,7 @@
     </div>
     <th:block th:include="include :: footer" />
     <script th:inline="javascript">
+        var isStatusDatas = [[${@dict.getType('purchaseorderdetails')}]];
         var editFlag = [[${@permission.hasPermi('purchaseorderdetails:purchaseorderdetails:edit')}]];
         var removeFlag = [[${@permission.hasPermi('purchaseorderdetails:purchaseorderdetails:remove')}]];
         var prefix = ctx + "purchaseorderdetails/purchaseorderdetails";
@@ -136,15 +122,18 @@
                 },
                 {
                     field: 'number',
-                    title: '数量'
+                    title: '数量(kg)'
                 },
                 {
                     field: 'price',
-                    title: '进货单价'
+                    title: '进货单价(元/500g)'
                 },
                 {
                     field: 'isStatus',
-                    title: '订单状态(0:驳回, 1: 审批中, 2:审批通过,正在出库, 3:订单完成 )'
+                    title: '订单状态',
+                    formatter: function(value, row, index) {
+                        return $.table.selectDictLabel(isStatusDatas, value);
+                    }
                 },
                 {
                     title: '操作',
@@ -155,13 +144,16 @@
                         pId = row.pId;
                         number = row.number;
                         isStatus = row.isStatus;
-                            actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.pId + '\')"><i class="fa fa-edit"></i>编辑</a> ');
-                            actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.pId + '\')"><i class="fa fa-remove"></i>删除</a>');
-                            actions.push('<a class="btn btn-primary btn-xs ' + '" href="javascript:void(0)" onclick="confirmReceipt(\'' + row.pId + '\')"><i class="fa fa-check" id="shouhuo"></i>确认收货</a>');
-                            actions.push('<button data-toggle="modal" data-target="#myModal " class="btn btn-warning btn-xs" onclick="/*backReceipt(\'' + row.pId + '\')*/"><i class="fa fa-th"></i>退货</>');
-                            // actions.push('<button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal"> A</button>');
-                            return actions.join('');
-
+                        var role = [[${@permission.hasRole('StoreManager')}]]; // 验证用户是否是店长
+                        if (row.isStatus === 1) {
+                            actions.push('<span class=" ' + role + ' " style="font-size: 12px">审批中</span>')
+                        } else if (row.isStatus === 2) {
+                            actions.push('<a class="btn btn-primary btn-xs ' + role + '" href="javascript:void(0)" onclick="confirmReceipt(\'' + row.pId + '\')"><i class="fa fa-check" id="shouhuo"></i>确认收货</a> ');
+                            actions.push('<button data-toggle="modal" data-target="#myModal " class="btn btn-warning btn-xs ' + role + '" onclick="/*backReceipt(\'' + row.pId + '\')*/"><i class="fa fa-th"></i>退货</>');
+                        } else {
+                            actions.push('<span class=" ' + role + ' " style="font-size: 12px">无操作</span>')
+                        }
+                        return actions.join('');
                     }
                 }]
             };
@@ -181,7 +173,7 @@
                     data:{"pId":pId},
                     success:function (res){
                         if(res == 1){
-                            $.modal.msgSuccess("确认收货成功");
+                            $.modal.msgSuccessReload("确认收货成功");
                         }else{
                             $.modal.msgError("确认收货失败");
                         }

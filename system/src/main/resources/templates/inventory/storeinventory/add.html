@@ -110,7 +110,7 @@
                 console.log("选中的仓库:" + wName);
                 if (wName !== null) {
                     var wareHouseWnumber = wareHouseObj[wName]; // 根据选则的仓库名称找出对应的仓库编号
-                    selectShopId(); // 查询所有门店编号
+                    selectShopId(wareHouseWnumber); // 根据选中的仓库的编号查询所有门店编号
                     selectWareHouseStockFruit(wareHouseWnumber, wName); // 根据选中的仓库名称的编号查询水果编号
                 }
             })
@@ -157,9 +157,12 @@
 
         // 查询所有门店编号
         var shopObj = {};
-        function selectShopId() {
+        function selectShopId(wareHouseWnumber) {
             $.ajax({
-                url: "/inventory/storeinventory/selectShopId",
+                url: "/inventory/storeinventory/selectShopIdByWareHouseId",
+                data: {
+                  "deptId": wareHouseWnumber
+                },
                 dataType: "json",
                 type: "post",
                 success: function (resp) {
@@ -288,7 +291,7 @@
             })
         }
 
-        // 根据水果类型编号查询水果编号和水果名称 (只查询状态正常的水果)
+        // 根据水果种类编号查询水果编号和水果名称 (只查询状态正常的水果)
         var fruitObj = {};
         function selectFruits(fruittypesCode, fruittypesName) {
             $.ajax({
@@ -300,7 +303,7 @@
                 },
                 type: "post",
                 success: function (resp) {
-                    $("#fruitName").empty();
+                    $("#fruitName").empty(); // 清空下拉框
                     fruitObj = {}; // 清空对象
                     $("<option disabled selected></option>").html("请选择水果").appendTo("#fruitName");
                     for (let i = 0; i < resp.fruits.length; i++) {
@@ -313,6 +316,12 @@
                     }
                     console.log("门店中"+ fruittypesName + "里没有的水果集合:")
                     console.log(fruitObj);
+                    let fruitNameOption = $("#fruitName").find("option").length; // 获取水果名称下拉框的选项个数
+                    console.log("水果名称下拉框的选项个数:" + fruitNameOption)
+                    if (fruitNameOption === 1) {
+                        $("#fruitName").empty(); // 清空下拉框
+                        $("<option disabled selected></option>").html("店中已无可供添加的" + fruittypesName + "种类的水果").appendTo("#fruitName");
+                    }
                 },
                 error:function(xhr,type,errorThrown){
                     console.log('XMLHttpRequest 对象:',xhr);

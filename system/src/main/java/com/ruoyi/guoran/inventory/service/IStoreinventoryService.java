@@ -68,9 +68,9 @@ public interface IStoreinventoryService
     public List<Warehouse> selectWareHouseId();
 
     /**
-     * 查询所有的门店编号
+     * 根据仓库编号查询所有门店编号
      */
-    public List<Shop> selectShopId();
+    public List<SysDept> selectShopIdByWareHouseId(SysDept sysDept);
 
     /**
      * 根据登录门店的菜单列表id,去查询配货仓库的部门id 和 部门名称

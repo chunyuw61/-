@@ -35,10 +35,10 @@
             </div>
 
             <div class="btn-group-sm" id="toolbar" role="group">
-                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="inventory:fruittypes:add">
+                <a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="inventory:fruittypes:add" shiro:hasRole="buyer">
                     <i class="fa fa-plus"></i> 添加水果种类
                 </a>
-                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="inventory:fruittypes:remove">
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="inventory:fruittypes:remove" shiro:hasRole="buyer">
                     <i class="fa fa-remove"></i> 批量下架
                 </a>
             </div>
@@ -112,8 +112,8 @@
                         align: 'center',
                         formatter: function(value, row, index) {
                             var actions = [];
-                            actions.push('<a class="btn btn-success btn-xs ' + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.fruittypesId + '\')"><i class="fa fa-edit"></i>修改水果种类信息</a> ');
-                            // actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.fruittypesId + '\')"><i class="fa fa-remove"></i>下架</a>');
+                            var role = [[${@permission.hasRole('buyer')}]]; // 验证用户是否具有采购员角色
+                            actions.push('<a class="btn btn-success btn-xs ' + role + editFlag + '" href="javascript:void(0)" onclick="$.operate.edit(\'' + row.fruittypesId + '\')"><i class="fa fa-edit"></i>修改水果种类信息</a> ');
                             return actions.join('');
                         }
                     }]

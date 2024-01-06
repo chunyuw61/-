@@ -210,6 +210,12 @@
                     }
                     console.log($("#warehouseName").val() + "中" + fruittypesName + "种类没有的水果:");
                     console.log(fruitObj);
+                    let fruitNameOption = $("#fruitName").find("option").length; // 获取水果名称下拉框的选项个数
+                    console.log("水果名称下拉框的选项个数:" + fruitNameOption)
+                    if (fruitNameOption === 1) {
+                        $("#fruitName").empty(); // 清空下拉框
+                        $("<option disabled selected></option>").html("店中已无可供添加的" + fruittypesName + "种类的水果").appendTo("#fruitName");
+                    }
                 },
                 error:function(xhr,type,errorThrown){
                     console.log('XMLHttpRequest 对象:',xhr);

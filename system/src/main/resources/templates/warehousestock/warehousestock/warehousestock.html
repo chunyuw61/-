@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
 <head>
-
+    <th:block th:include="include :: header('订货')" />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -19,130 +19,124 @@
 <!--    <th:block th:include="include :: header('订货列表')" />-->
 </head>
 <body class="gray-bg">
-<input type="text"  name="orderId" id="orderId">
-<button onclick="generateTimeAndRandomFourDigitNumber()">生成订货单号</button>
-<!--<div class="container-div">-->
-<!--    <div class="row">-->
-<!--        <div class="col-sm-12 select-table table-striped">-->
+<input type="hidden"  name="orderId" id="orderId" readonly>
+<div id="profileTemplate"></div>
+<script>
+    let fruitsMap = []
+    var number ;
+    var id;
+    var type;
+    $(document).ready(function() {
+        generateTimeAndRandomFourDigitNumber(); // 生成订货单号
+        addHtml(); // 插入水果列表
+    })
+    function addHtml() {
+        $.ajax({
+            url: "/warehousestock/warehousestock/list",
+            type: 'post',
+            dataType: 'json',
+            success: function (data) {
+                let datas = data.rows
+                for (let i = 0; i < datas.length; i++) {
+                    number=datas[i].whCount;
+                    fruitsMap = datas[i]
+                    id = datas[i].whId;
+                    console.log(id)
+                    console.log(fruitsMap)
+                    $("<div class='col-sm-3'></div>").html(
+                        "        <div class=\"contact-box\">\n" +
+                        "                <div class=\"col-sm-4\">\n" +
+                        "                    <div class=\"text-center\">\n" +
+                        "                        <img alt=\"image\" class=\"img-circle m-t-xs img-responsive\" src='"+datas[i].img+"'>\n" +
+                        "                        <div class=\"m-t-xs font-bold\" id=\"fruitId\">"+datas[i].fruitId+"</div>\n" +
+                        "\n" +
+                        "                    </div>\n" +
+                        "                </div>\n" +
+                        "                <div class=\"col-sm-8\">\n" +
+                        "                    <h3 id=\"fruittypesId\"><strong>水果种类: "+datas[i].fruittypesId+"</strong></h3>\n" +
+                        "                    <p id=\"fruitName\">"+datas[i].fruitName+"</p>\n" +
+                        "                    <address>\n" +
+                        "                        <p id=\"jinjia\"><i class=\"fa fa-jpy\"></i> "+datas[i].jinjia+"</p><br>\n" +
+                        "                        库存：<input type='text' readonly size='1' value='"+datas[i].whCount+"' id='num"+i+"'>kg</address>\n" +
+                        "                </div>\n" +
+                        "                <div id=\"a\">\n" +
+                        "                    <input type=\"text\" name=\"num\" id='input"+i+"' placeholder=\"请输入数量\" onblur=\"bjnum("+i+")\">kg\n" +
+                        "                </div>\n" +
+                        "                <div class=\"clearfix\"></div>\n" +
+                        "               <div><button className=\"btn btn-primary btn-lg\" onClick=\"addOthers("+i+"," + id + ")\">订货</button></div>\n"+
+                        "            </a>\n" +
+                        "    </div>").appendTo("#profileTemplate");
+                }
+            }
+        });
+    }
+</script>
 
-<!--            <table id="bootstrap-table" data-page-size="10"-->
-<!--                   data-show-custom-view="true" data-custom-view="customViewFormatter"-->
-<!--                   data-show-custom-view-button="true">-->
-<!--            </table>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--</div>-->
+<script>
+    function bjnum(number){
+        console.log(number)
+        let sysData = $('#num'+number).val();
+        let inputData = $('#input'+number).val();
+        console.log(sysData + "-" + inputData)
+        if(inputData > sysData){
+            alert("库存不足")
+        }
+    }
+</script>
 
+<script>
+    function generateTimeAndRandomFourDigitNumber() {
+        var currentDate = new Date(); // 获取当前日期和时间
+        currentDate.getFullYear();
+        var formattedDate = currentDate.getFullYear() + '' + (currentDate.getMonth() + 1) + '' + currentDate.getDate(); // 格式化日期为YYYY-MM-DD
+        var randomNumber = Math.floor(Math.random() * 9000) + 1000; // 生成1000-9999之间的随机数
+        var inputValue = formattedDate + '' + randomNumber; // 拼接日期和随机数
+        document.getElementById("orderId").value = inputValue; // 设置<input>元素的值
+    }
+</script>
 
-<div id="profileTemplate">
-    <script>
-        let fruitsMap = []
-        var number ;
-        var id;
-        var type;
+<script>
 
-        window.onload = function () {
+    function addOthers(number,id) {
+        let input = $('#input'+number).val(); // 数量
+        let value = document.getElementById("orderId").value; // 订单编号
+        let msgConfirm = "确定要订购" + input + "kg该水果吗?"
+        $.modal.confirm(msgConfirm, function() {
+            $.modal.loading("正在处理中，请稍后...");
+            setTimeout(function() {
+                addOtherss(number, id, input, value)
+            }, 1500); // 3000毫秒等于3秒
+        });
+    }
+    function addOtherss(number, id, input, value) {
+        console.log(">>>>>>>>>>"+number+"ddddddddddddd"+id)
+        console.log(input)
+        if(input>0){
             $.ajax({
-                url: "/warehousestock/warehousestock/list",
+                url: '/warehousestock/warehousestock/addOthers',
                 type: 'post',
                 dataType: 'json',
-                success: function (data) {
-                    let datas = data.rows
-                    for (let i = 0; i < datas.length; i++) {
-                        number=datas[i].whCount;
-                        fruitsMap = datas[i]
-                        id = datas[i].whId;
-                        console.log(id)
-                        console.log(fruitsMap)
-                        $("#profileTemplate").append("<div class=\"col-sm-4\">\n" +
-                            "        <div class=\"contact-box\">\n" +
-                            "                <div class=\"col-sm-4\">\n" +
-                            "                    <div class=\"text-center\">\n" +
-                            "                        <img alt=\"image\" class=\"img-circle m-t-xs img-responsive\" src='"+datas[i].img+"'>\n" +
-                            "                        <div class=\"m-t-xs font-bold\" id=\"fruitId\">"+datas[i].fruitId+"</div>\n" +
-                            "\n" +
-                            "                    </div>\n" +
-                            "                </div>\n" +
-                            "                <div class=\"col-sm-8\">\n" +
-                            "                    <h3 id=\"fruittypesId\"><strong>"+datas[i].fruittypesId+"</strong></h3>\n" +
-                            "                    <p id=\"fruitName\"><i class=\"fa fa-jpy\"></i>"+datas[i].fruitName+"</p>\n" +
-                            "                    <address>\n" +
-                            "                        <p id=\"jinjia\">Money:"+datas[i].jinjia+"</p><br>\n" +
-                            // "                        <abbr title=\"Phone\">Num:</abbr> "+datas[i].whCount+"" +
-                            "                        库存：<input type='text' readonly size='1' value='"+datas[i].whCount+"' id='num"+i+"'> </address>\n" +
-                            "                </div>\n" +
-                            "                <div id=\"a\">\n" +
-                            "                    <input type=\"text\" name=\"num\" id='input"+i+"' placeholder=\"请输入数量\" onblur=\"bjnum("+i+")\">\n" +
-                            "                </div>\n" +
-                            "                <div class=\"clearfix\"></div>\n" +
-                            "               <div><button className=\"btn btn-primary btn-lg\" onClick=\"addOthers("+i+"," + id + ")\">订货</button></div>\n"+
-                            // "               <div><button className=\"btn btn-primary btn-lg\" onClick=\"addOthers("+i+")\">订货</button></div>\n"+
-                            "            </a>\n" +
-                            "        </div>\n" +
-                            "    </div>");
-                        // <button className=\"btn btn-primary btn-lg\" onClick=\"addOthers("+id+")\">订货</button>
-                        //添加按钮
-                      //   $("#profileTemplate").append("<button onclick=\"addOthers("+id+")\">订货</button>");
-
+                data: {
+                    "value":value,
+                    "input":input,
+                    "id":id
+                },
+                success: function (res) {
+                    console.log(res)
+                    if(res === 1){
+                        $.modal.closeLoading(); // 关闭遮罩层
+                        $.modal.msgSuccess("操作成功");
+                        $.modal.alertSuccess("操作成功");
+                    }else{
+                        $.modal.closeLoading(); // 关闭遮罩层
+                        $.modal.msgError("操作失败");
+                        $.modal.alertError("操作失败");
                     }
                 }
-            });
+            })
         }
-    </script>
-
-    <script>
-        function bjnum(number){
-            console.log(number)
-           let sysData = $('#num'+number).val();
-           let inputData = $('#input'+number).val();
-           console.log(sysData + "-" + inputData)
-            if(inputData > sysData){
-                alert("库存不足")
-            }
-        }
-    </script>
-
-    <script>
-        function generateTimeAndRandomFourDigitNumber() {
-            var currentDate = new Date(); // 获取当前日期和时间
-            currentDate.getFullYear();
-            var formattedDate = currentDate.getFullYear() + '' + (currentDate.getMonth() + 1) + '' + currentDate.getDate(); // 格式化日期为YYYY-MM-DD
-            var randomNumber = Math.floor(Math.random() * 9000) + 1000; // 生成1000-9999之间的随机数
-            var inputValue = formattedDate + '' + randomNumber; // 拼接日期和随机数
-            document.getElementById("orderId").value = inputValue; // 设置<input>元素的值
-        }
-    </script>
-
-    <script>
-        function addOthers(number,id){
-            console.log(">>>>>>>>>>"+number+"ddddddddddddd"+id)
-            let input = $('#input'+number).val();
-            console.log(input)
-            let value = document.getElementById("orderId").value;
-            if(input>0){
-                $.ajax({
-                    url: '/warehousestock/warehousestock/addOthers',
-                    type: 'post',
-                    dataType: 'json',
-                    data: {
-                        "value":value,
-                        "input":input,
-                        "id":id
-                },
-                    success: function (res) {
-                        console.log(res)
-                        if(res == 1){
-                            alert("添加成功")
-                        }else{
-                            alert("添加失败")
-                        }
-                    }
-                })
-            }
-        }
-    </script>
-
-</div>
-
+    }
+</script>
 </body>
+<th:block th:include="include :: footer" />
 </html>
