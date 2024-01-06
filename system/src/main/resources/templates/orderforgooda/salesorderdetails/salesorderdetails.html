@@ -193,6 +193,7 @@
                 }
             });
         }
+
         // 模块二：选择类型
         function selectType() {
             let type = $("#shop option:selected");
@@ -267,6 +268,7 @@
                 }
             });
         }
+
         loadShops();
         $("#shop").change(function () {
             let selectedShop = $("#shop option:selected").text();
@@ -388,40 +390,42 @@
             quantity: quantity,
             sum: sum,
         };
+        if (quantity > 0) {
+            console.log(shopName, sum, quantity)
+            $.ajax({
+                url: 'http://localhost:80/salesorderdetails/alipay',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(paymentInfo),
+                success: function (response) {
+                    console.log('成功: ', response);
 
-        console.log(shopName, sum, quantity)
-        $.ajax({
-            url: 'http://localhost:80/salesorderdetails/alipay',
-            type: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify(paymentInfo),
-            success: function (response) {
-                console.log('成功: ', response);
+                    // 检查响应数据中的第二个元素是否为"异常"
+                    if (response[1] === "异常") {
+                        // 如果出现异常，显示一个弹窗
+                        alert("支付失败");
+                    } else {
+                        // 如果没有出现异常，显示模态框
+                        var orderNumber = response[0];
+                        var base64Image = response[1];
 
-                // 检查响应数据中的第二个元素是否为"异常"
-                if (response[1] === "异常") {
-                    // 如果出现异常，显示一个弹窗
-                    alert("支付失败");
-                } else {
-                    // 如果没有出现异常，显示模态框
-                    var orderNumber = response[0];
-                    var base64Image = response[1];
+                        // 在模态框中显示订单号和图片
+                        $('#myModal .modal-body').html('<img src="data:image/png;base64,' + base64Image + '" alt="Image" />');
+                        console.log("Base64 图片", base64Image)
 
-                    // 在模态框中显示订单号和图片
-                    $('#myModal .modal-body').html('<img src="data:image/png;base64,' + base64Image + '" alt="Image" />');
-                    console.log("Base64 图片", base64Image)
-
-                    $('#myModal .modal-title').text("订单号: " + orderNumber);
-                    globalOrderNumber = orderNumber;
-                    $('#myModal').modal('show');
+                        $('#myModal .modal-title').text("订单号: " + orderNumber);
+                        globalOrderNumber = orderNumber;
+                        $('#myModal').modal('show');
+                    }
+                },
+                error: function (error) {
+                    console.log('发生错误: ', error);
+                    location.reload();
                 }
-            },
-            error: function (error) {
-                console.log('发生错误: ', error);
-                location.reload();
-            }
-        });
-
+            });
+        } else {
+            alert("想屁吃!!!!!!!")
+        }
     });
     /*------------------------------------------------------------------------------------*/
     //查询订单支付状态
