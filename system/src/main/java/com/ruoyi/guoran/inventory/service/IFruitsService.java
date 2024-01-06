@@ -29,6 +29,11 @@ public interface IFruitsService
     public List<Fruits> selectFruitsList(Fruits fruits);
 
     /**
+     * 根据水果种类名称 查询水果种类编号
+     */
+    public String selectFruitTypeId(String name);
+
+    /**
      * 根据水果种类编号 查询水果种类名称
      */
     public String selectFruitTypeName(String code);

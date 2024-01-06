@@ -72,6 +72,18 @@ public class WarehousestockController extends BaseController
     }
 
     /**
+     * 根据仓库名称 查询仓库编号
+     */
+    @PostMapping("/selectWareHouseId")
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> selectWareHouseId(@RequestParam String wName) {
+        Map<String, String> response = new HashMap<>();
+        String wareHouseId = warehousestockService.selectWareHouseId(wName);
+        response.put("wareHouseId", wareHouseId);
+        return ResponseEntity.ok(response);
+    }
+
+    /**
      * 根据仓库编号 查询仓库名称
      */
     @PostMapping("/selectWareHouseName")
@@ -113,7 +125,8 @@ public class WarehousestockController extends BaseController
         Subject subject = ShiroUtils.getSubject();
         List<String> roles = new ArrayList<>();
         roles.add("admin");
-        roles.add("WarehouseManager");
+        roles.add("manger"); // 总经理权限
+        roles.add("WarehouseManager"); // 仓库经理权限
         boolean hasAnyRole = false;
         for (String role : roles) {
             if (subject.hasRole(role)) {

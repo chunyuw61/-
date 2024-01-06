@@ -2,11 +2,13 @@ package com.ruoyi.guoran.inventory.service.impl;
 
 import java.util.List;
 
-import com.ruoyi.guoran.domain.Purchaseorderdetails;
+import com.ruoyi.common.core.domain.entity.SysDept;
+import com.ruoyi.guoran.domain.Warehousestock;
 import com.ruoyi.guoran.inventory.service.IPurchaseorderdetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.ruoyi.guoran.inventory.mapper.PurchaseorderdetailsMapper;
+import com.ruoyi.guoran.domain.Purchaseorderdetails;
 
 /**
  * 门店进货单明细和仓库出货单明细Service业务层处理
@@ -45,13 +47,23 @@ public class PurchaseorderdetailsServiceImpl implements IPurchaseorderdetailsSer
     }
 
     @Override
-    public String selectShopName(String sNumber) {
-        return purchaseorderdetailsMapper.selectShopName(sNumber);
+    public String selectShopId(String sName) {
+        return purchaseorderdetailsMapper.selectShopId(sName);
+    }
+
+    @Override
+    public String selectShopName(SysDept sysDept) {
+        return purchaseorderdetailsMapper.selectShopName(sysDept);
     }
 
     @Override
     public String selectFruitTypeName(String code) {
         return purchaseorderdetailsMapper.selectFruitTypeName(code);
+    }
+
+    @Override
+    public List<Purchaseorderdetails> selectPurchaseorderdetailsByWareAncestors(SysDept sysDept) {
+        return purchaseorderdetailsMapper.selectPurchaseorderdetailsByWareAncestors(sysDept);
     }
 
 
@@ -62,5 +74,10 @@ public class PurchaseorderdetailsServiceImpl implements IPurchaseorderdetailsSer
     public int auditByPId(Purchaseorderdetails purchaseorderdetails)
     {
         return purchaseorderdetailsMapper.auditByPId(purchaseorderdetails);
+    }
+
+    @Override
+    public boolean reduceInventoryByWidAndFruitId(Warehousestock warehousestock) {
+        return purchaseorderdetailsMapper.reduceInventoryByWidAndFruitId(warehousestock);
     }
 }

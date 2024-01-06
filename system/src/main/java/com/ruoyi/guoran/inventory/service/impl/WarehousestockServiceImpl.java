@@ -56,6 +56,11 @@ public class WarehousestockServiceImpl implements IWarehousestockService
         return warehousestockMapper.selectFruitId(wId);
     }
 
+    @Override
+    public String selectWareHouseId(String wName) {
+        return warehousestockMapper.selectWareHouseId(wName);
+    }
+
     /**
      * 根据仓库编号 查询仓库名称
      */

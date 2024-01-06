@@ -45,6 +45,11 @@ public class FruitsServiceImpl implements IFruitsService
         return fruitsMapper.selectFruitsList(fruits);
     }
 
+    @Override
+    public String selectFruitTypeId(String name) {
+        return fruitsMapper.selectFruitTypeId(name);
+    }
+
     /**
      * 根据水果种类编号 查询水果种类名称
      */

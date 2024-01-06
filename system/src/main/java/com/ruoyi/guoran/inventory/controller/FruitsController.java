@@ -7,7 +7,7 @@ import java.util.Map;
 
 import com.ruoyi.guoran.domain.Storeinventory;
 import com.ruoyi.guoran.inventory.service.IFruitsService;
-import com.ruoyi.guoran.orderforgood.service.impl.StoreInventoryServiceImpl;
+
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -36,8 +36,8 @@ public class FruitsController extends BaseController
     
     @Autowired
     private IFruitsService fruitsService;
-    @Autowired
-    private StoreInventoryServiceImpl storeinventoryService;
+/*    @Autowired
+    private StoreInventoryServiceImpl storeinventoryService;*/
 
     @RequiresPermissions("inventory:fruits:view")
     @GetMapping()
@@ -57,6 +57,18 @@ public class FruitsController extends BaseController
         startPage();
         List<Fruits> list = fruitsService.selectFruitsList(fruits);
         return getDataTable(list);
+    }
+
+    /**
+     * 根据水果种类名称查询水果种类编号
+     */
+    @PostMapping("/selectFruitTypeId")
+    @ResponseBody
+    public ResponseEntity<Map<String, String>> selectFruitTypeId(@RequestParam String name) {
+        Map<String, String> response = new HashMap<>();
+        String fruitTypeId = fruitsService.selectFruitTypeId(name);
+        response.put("fruitTypeId", fruitTypeId);
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -154,7 +166,7 @@ public class FruitsController extends BaseController
         return toAjax(fruitsService.deleteFruitsByFruitIds(ids));
     }
 
-    @RequestMapping("/inquireByFruittypesId")
+/*    @RequestMapping("/inquireByFruittypesId")
     public ResponseEntity<List<Fruits>> inquireByFruittypesId(@RequestParam String fruittypesId){
         Storeinventory storeinventory = new Storeinventory();
         storeinventory.setFruittypesId(fruittypesId);
@@ -184,6 +196,6 @@ public class FruitsController extends BaseController
             System.out.println(fruit);
         }
         return ResponseEntity.ok(fruits);
-    }
+    }*/
 
 }

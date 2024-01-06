@@ -37,6 +37,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         where fruit_id = #{fruitId}
     </select>
 
+<!--  根据水果种类名称 查询水果种类编号  -->
+    <select id="selectFruitTypeId" parameterType="String" resultType="String">
+        select code from fruittypes where name = #{name}
+    </select>
+
     <!--  根据水果种类编号 查询水果种类名称  -->
     <select id="selectFruitTypeName" parameterType="String" resultType="String">
         select name from fruittypes where code = #{code}
