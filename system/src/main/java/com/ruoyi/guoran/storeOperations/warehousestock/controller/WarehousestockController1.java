@@ -144,15 +144,25 @@ public class WarehousestockController1 extends BaseController
         return toAjax(warehousestockService.deleteWarehousestockByWhIds(ids));
     }
 
+    /**
+     *
+     * 订货
+     * @param id
+     * @param input
+     * @param value
+     * @return
+     */
     @PostMapping("addOthers")
     @ResponseBody
     public int addOthers(Long id , Double input, String value){
 
         System.out.println("    ------------------ "+id);
         SysUser sysUser = ShiroUtils.getSysUser();
-        System.out.println("当前用户"+sysUser.getUserName());
-        String s = warehousestockMapper1.selectShopByRen(sysUser.getUserName());
-        System.out.println("当前用户"+s);
+        System.out.println("当前登录的用户" + sysUser.getUserName());
+        Long deptId = sysUser.getDept().getDeptId();
+        System.out.println("当前用户的部门id:" + deptId);
+        String deptName = sysUser.getDept().getDeptName();
+        System.out.println("当前用户的部门:" + deptName);
 
 
         // 获取当前时间
@@ -163,27 +173,21 @@ public class WarehousestockController1 extends BaseController
             Random random = new Random();
             int rannum = (int) (random.nextDouble() * (9999 - 1000 + 1)) + 1000;
 
-            // 拼接成订单编号
-            String orderNumber =  dateStr;
-
         int a = 0;
 
         Warehousestock warehousestock = warehousestockMapper1.selectWarehousestockByWhId(id);
         System.out.println(warehousestock);
 
-        int i = purchaseorderdetailsMapper1.insertPurchaseorderdetails(new Purchaseorderdetails(
-                null,
-                s,
-                value,
-                warehousestock.getFruittypesId(),
-                warehousestock.getFruitId(),
-                warehousestock.getFruitName(),
-                input,
-                warehousestock.getJinjia()
+        Purchaseorderdetails purchaseorderdetails = new Purchaseorderdetails();
+        purchaseorderdetails.setsId(String.valueOf(deptId));
+        purchaseorderdetails.setpNumber(value); // 订单号
+        purchaseorderdetails.setFruittypesId(warehousestock.getFruittypesId());
+        purchaseorderdetails.setFruitId(warehousestock.getFruitId());
+        purchaseorderdetails.setFruitName(warehousestock.getFruitName());
+        purchaseorderdetails.setNumber(input); // 进货数量
+        purchaseorderdetails.setPrice(warehousestock.getJinjia());
 
-        ));
-
-
+        int i = purchaseorderdetailsMapper1.insertPurchaseorderdetails(purchaseorderdetails);
         System.out.println("==================="+i);
         if(i>0){
             a =1;
