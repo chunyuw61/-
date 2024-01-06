@@ -111,7 +111,6 @@
             <artifactId>alipay-trade-sdk</artifactId>
             <version>20161215</version>
         </dependency>
-
         <dependency>
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
